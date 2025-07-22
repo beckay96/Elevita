@@ -30,6 +30,8 @@ import {
   type HealthReport,
   type InsertHealthReport,
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -104,261 +106,238 @@ export interface IStorage {
   }>>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User> = new Map();
-  private healthProfiles: Map<string, HealthProfile> = new Map();
-  private medications: Map<number, Medication> = new Map();
-  private medicationLogs: Map<number, MedicationLog> = new Map();
-  private symptoms: Map<number, Symptom> = new Map();
-  private appointments: Map<number, Appointment> = new Map();
-  private healthMetrics: Map<number, HealthMetric> = new Map();
-  private aiInsights: Map<number, AiInsight> = new Map();
-  private reminders: Map<number, Reminder> = new Map();
-  private healthReports: Map<number, HealthReport> = new Map();
-  
-  private currentId = 1;
-
-  private getNextId(): number {
-    return this.currentId++;
-  }
-
+export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const existingUser = this.users.get(userData.id!);
-    const user: User = {
-      ...userData,
-      id: userData.id!,
-      createdAt: existingUser?.createdAt || new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.set(user.id, user);
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          profileImageUrl: userData.profileImageUrl,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
     return user;
   }
 
   // Health Profile operations
   async getHealthProfile(userId: string): Promise<HealthProfile | undefined> {
-    return Array.from(this.healthProfiles.values()).find(p => p.userId === userId);
+    const [profile] = await db.select().from(healthProfiles).where(eq(healthProfiles.userId, userId));
+    return profile || undefined;
   }
 
   async createHealthProfile(profile: InsertHealthProfile): Promise<HealthProfile> {
-    const id = this.getNextId();
-    const newProfile: HealthProfile = {
-      ...profile,
-      id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.healthProfiles.set(id, newProfile);
+    const [newProfile] = await db
+      .insert(healthProfiles)
+      .values(profile)
+      .returning();
     return newProfile;
   }
 
   async updateHealthProfile(userId: string, profile: Partial<InsertHealthProfile>): Promise<HealthProfile> {
-    const existing = await this.getHealthProfile(userId);
-    if (!existing) {
+    const [updated] = await db
+      .update(healthProfiles)
+      .set({ ...profile, updatedAt: new Date() })
+      .where(eq(healthProfiles.userId, userId))
+      .returning();
+    if (!updated) {
       throw new Error("Health profile not found");
     }
-    const updated: HealthProfile = {
-      ...existing,
-      ...profile,
-      updatedAt: new Date(),
-    };
-    this.healthProfiles.set(existing.id, updated);
     return updated;
   }
 
   // Medication operations
   async getMedications(userId: string): Promise<Medication[]> {
-    return Array.from(this.medications.values()).filter(m => m.userId === userId);
+    return await db.select().from(medications).where(eq(medications.userId, userId));
   }
 
   async getActiveMedications(userId: string): Promise<Medication[]> {
-    return Array.from(this.medications.values()).filter(m => m.userId === userId && m.isActive);
+    return await db.select().from(medications).where(
+      and(eq(medications.userId, userId), eq(medications.isActive, true))
+    );
   }
 
   async createMedication(medication: InsertMedication): Promise<Medication> {
-    const id = this.getNextId();
-    const newMedication: Medication = {
-      ...medication,
-      id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.medications.set(id, newMedication);
+    const [newMedication] = await db
+      .insert(medications)
+      .values(medication)
+      .returning();
     return newMedication;
   }
 
   async updateMedication(id: number, medication: Partial<InsertMedication>): Promise<Medication> {
-    const existing = this.medications.get(id);
-    if (!existing) {
+    const [updated] = await db
+      .update(medications)
+      .set({ ...medication, updatedAt: new Date() })
+      .where(eq(medications.id, id))
+      .returning();
+    if (!updated) {
       throw new Error("Medication not found");
     }
-    const updated: Medication = {
-      ...existing,
-      ...medication,
-      updatedAt: new Date(),
-    };
-    this.medications.set(id, updated);
     return updated;
   }
 
   async deleteMedication(id: number): Promise<void> {
-    this.medications.delete(id);
+    await db.delete(medications).where(eq(medications.id, id));
   }
 
   // Medication Log operations
   async getMedicationLogs(userId: string, medicationId?: number): Promise<MedicationLog[]> {
-    return Array.from(this.medicationLogs.values()).filter(log => 
-      log.userId === userId && (!medicationId || log.medicationId === medicationId)
-    );
+    if (medicationId) {
+      return await db.select().from(medicationLogs).where(
+        and(eq(medicationLogs.userId, userId), eq(medicationLogs.medicationId, medicationId))
+      );
+    }
+    return await db.select().from(medicationLogs).where(eq(medicationLogs.userId, userId));
   }
 
   async createMedicationLog(log: InsertMedicationLog): Promise<MedicationLog> {
-    const id = this.getNextId();
-    const newLog: MedicationLog = {
-      ...log,
-      id,
-      createdAt: new Date(),
-    };
-    this.medicationLogs.set(id, newLog);
+    const [newLog] = await db
+      .insert(medicationLogs)
+      .values(log)
+      .returning();
     return newLog;
   }
 
   async getMedicationAdherence(userId: string, medicationId: number, days: number): Promise<number> {
-    const logs = await this.getMedicationLogs(userId, medicationId);
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
     
-    const recentLogs = logs.filter(log => log.takenAt >= cutoffDate);
+    const logs = await db.select().from(medicationLogs).where(
+      and(
+        eq(medicationLogs.userId, userId),
+        eq(medicationLogs.medicationId, medicationId),
+        gte(medicationLogs.takenAt, cutoffDate)
+      )
+    );
+    
     const totalExpected = days; // Simplified calculation
-    const totalTaken = recentLogs.filter(log => !log.missed).length;
+    const totalTaken = logs.filter(log => !log.missed).length;
     
     return totalExpected > 0 ? Math.round((totalTaken / totalExpected) * 100) : 0;
   }
 
   // Symptom operations
   async getSymptoms(userId: string): Promise<Symptom[]> {
-    return Array.from(this.symptoms.values()).filter(s => s.userId === userId);
+    return await db.select().from(symptoms).where(eq(symptoms.userId, userId));
   }
 
   async createSymptom(symptom: InsertSymptom): Promise<Symptom> {
-    const id = this.getNextId();
-    const newSymptom: Symptom = {
-      ...symptom,
-      id,
-      createdAt: new Date(),
-    };
-    this.symptoms.set(id, newSymptom);
+    const [newSymptom] = await db
+      .insert(symptoms)
+      .values(symptom)
+      .returning();
     return newSymptom;
   }
 
   async updateSymptom(id: number, symptom: Partial<InsertSymptom>): Promise<Symptom> {
-    const existing = this.symptoms.get(id);
-    if (!existing) {
+    const [updated] = await db
+      .update(symptoms)
+      .set(symptom)
+      .where(eq(symptoms.id, id))
+      .returning();
+    if (!updated) {
       throw new Error("Symptom not found");
     }
-    const updated: Symptom = {
-      ...existing,
-      ...symptom,
-    };
-    this.symptoms.set(id, updated);
     return updated;
   }
 
   async deleteSymptom(id: number): Promise<void> {
-    this.symptoms.delete(id);
+    await db.delete(symptoms).where(eq(symptoms.id, id));
   }
 
   // Appointment operations
   async getAppointments(userId: string): Promise<Appointment[]> {
-    return Array.from(this.appointments.values()).filter(a => a.userId === userId);
+    return await db.select().from(appointments).where(eq(appointments.userId, userId));
   }
 
   async getUpcomingAppointments(userId: string): Promise<Appointment[]> {
     const now = new Date();
-    return Array.from(this.appointments.values()).filter(a => 
-      a.userId === userId && a.appointmentDate > now && a.status === 'scheduled'
+    return await db.select().from(appointments).where(
+      and(
+        eq(appointments.userId, userId),
+        gte(appointments.appointmentDate, now),
+        eq(appointments.status, 'scheduled')
+      )
     );
   }
 
   async createAppointment(appointment: InsertAppointment): Promise<Appointment> {
-    const id = this.getNextId();
-    const newAppointment: Appointment = {
-      ...appointment,
-      id,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.appointments.set(id, newAppointment);
+    const [newAppointment] = await db
+      .insert(appointments)
+      .values(appointment)
+      .returning();
     return newAppointment;
   }
 
   async updateAppointment(id: number, appointment: Partial<InsertAppointment>): Promise<Appointment> {
-    const existing = this.appointments.get(id);
-    if (!existing) {
+    const [updated] = await db
+      .update(appointments)
+      .set({ ...appointment, updatedAt: new Date() })
+      .where(eq(appointments.id, id))
+      .returning();
+    if (!updated) {
       throw new Error("Appointment not found");
     }
-    const updated: Appointment = {
-      ...existing,
-      ...appointment,
-      updatedAt: new Date(),
-    };
-    this.appointments.set(id, updated);
     return updated;
   }
 
   async deleteAppointment(id: number): Promise<void> {
-    this.appointments.delete(id);
+    await db.delete(appointments).where(eq(appointments.id, id));
   }
 
   // Health Metrics operations
   async getHealthMetrics(userId: string, type?: string): Promise<HealthMetric[]> {
-    return Array.from(this.healthMetrics.values()).filter(m => 
-      m.userId === userId && (!type || m.type === type)
-    );
+    if (type) {
+      return await db.select().from(healthMetrics).where(
+        and(eq(healthMetrics.userId, userId), eq(healthMetrics.type, type))
+      );
+    }
+    return await db.select().from(healthMetrics).where(eq(healthMetrics.userId, userId));
   }
 
   async createHealthMetric(metric: InsertHealthMetric): Promise<HealthMetric> {
-    const id = this.getNextId();
-    const newMetric: HealthMetric = {
-      ...metric,
-      id,
-      createdAt: new Date(),
-    };
-    this.healthMetrics.set(id, newMetric);
+    const [newMetric] = await db
+      .insert(healthMetrics)
+      .values(metric)
+      .returning();
     return newMetric;
   }
 
   // AI Insights operations
   async getAiInsights(userId: string): Promise<AiInsight[]> {
-    return Array.from(this.aiInsights.values()).filter(i => i.userId === userId);
+    return await db.select().from(aiInsights).where(eq(aiInsights.userId, userId));
   }
 
   async createAiInsight(insight: InsertAiInsight): Promise<AiInsight> {
-    const id = this.getNextId();
-    const newInsight: AiInsight = {
-      ...insight,
-      id,
-      createdAt: new Date(),
-    };
-    this.aiInsights.set(id, newInsight);
+    const [newInsight] = await db
+      .insert(aiInsights)
+      .values(insight)
+      .returning();
     return newInsight;
   }
 
   async markInsightAsRead(id: number): Promise<void> {
-    const insight = this.aiInsights.get(id);
-    if (insight) {
-      insight.isRead = true;
-      this.aiInsights.set(id, insight);
-    }
+    await db
+      .update(aiInsights)
+      .set({ isRead: true })
+      .where(eq(aiInsights.id, id));
   }
 
   // Reminder operations
   async getReminders(userId: string): Promise<Reminder[]> {
-    return Array.from(this.reminders.values()).filter(r => r.userId === userId);
+    return await db.select().from(reminders).where(eq(reminders.userId, userId));
   }
 
   async getTodayReminders(userId: string): Promise<Reminder[]> {
@@ -367,45 +346,41 @@ export class MemStorage implements IStorage {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     
-    return Array.from(this.reminders.values()).filter(r => 
-      r.userId === userId && 
-      r.scheduledFor >= today && 
-      r.scheduledFor < tomorrow &&
-      !r.isCompleted
+    return await db.select().from(reminders).where(
+      and(
+        eq(reminders.userId, userId),
+        gte(reminders.scheduledFor, today),
+        lte(reminders.scheduledFor, tomorrow),
+        eq(reminders.isCompleted, false)
+      )
     );
   }
 
   async createReminder(reminder: InsertReminder): Promise<Reminder> {
-    const id = this.getNextId();
-    const newReminder: Reminder = {
-      ...reminder,
-      id,
-      createdAt: new Date(),
-    };
-    this.reminders.set(id, newReminder);
+    const [newReminder] = await db
+      .insert(reminders)
+      .values(reminder)
+      .returning();
     return newReminder;
   }
 
   async markReminderCompleted(id: number): Promise<void> {
-    const reminder = this.reminders.get(id);
-    if (reminder) {
-      reminder.isCompleted = true;
-      this.reminders.set(id, reminder);
-    }
+    await db
+      .update(reminders)
+      .set({ isCompleted: true })
+      .where(eq(reminders.id, id));
   }
 
   // Health Report operations
   async getHealthReports(userId: string): Promise<HealthReport[]> {
-    return Array.from(this.healthReports.values()).filter(r => r.userId === userId);
+    return await db.select().from(healthReports).where(eq(healthReports.userId, userId));
   }
 
   async createHealthReport(report: InsertHealthReport): Promise<HealthReport> {
-    const id = this.getNextId();
-    const newReport: HealthReport = {
-      ...report,
-      id,
-    };
-    this.healthReports.set(id, newReport);
+    const [newReport] = await db
+      .insert(healthReports)
+      .values(report)
+      .returning();
     return newReport;
   }
 
@@ -450,8 +425,8 @@ export class MemStorage implements IStorage {
     }> = [];
 
     // Add symptoms
-    const symptoms = await this.getSymptoms(userId);
-    symptoms.forEach(symptom => {
+    const symptomsData = await this.getSymptoms(userId);
+    symptomsData.forEach(symptom => {
       events.push({
         id: symptom.id,
         type: 'symptom',
@@ -464,9 +439,9 @@ export class MemStorage implements IStorage {
     });
 
     // Add medication logs
-    const medicationLogs = await this.getMedicationLogs(userId);
-    for (const log of medicationLogs) {
-      const medication = this.medications.get(log.medicationId);
+    const medicationLogsData = await this.getMedicationLogs(userId);
+    for (const log of medicationLogsData) {
+      const [medication] = await db.select().from(medications).where(eq(medications.id, log.medicationId));
       if (medication) {
         events.push({
           id: log.id,
@@ -480,8 +455,8 @@ export class MemStorage implements IStorage {
     }
 
     // Add appointments
-    const appointments = await this.getAppointments(userId);
-    appointments.forEach(appointment => {
+    const appointmentsData = await this.getAppointments(userId);
+    appointmentsData.forEach(appointment => {
       events.push({
         id: appointment.id,
         type: 'appointment',
@@ -499,4 +474,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

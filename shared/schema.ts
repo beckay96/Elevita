@@ -11,6 +11,7 @@ import {
   date,
   time,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -235,3 +236,84 @@ export const insertReminderSchema = createInsertSchema(reminders).omit({
   id: true,
   createdAt: true,
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  healthProfiles: many(healthProfiles),
+  medications: many(medications),
+  medicationLogs: many(medicationLogs),
+  symptoms: many(symptoms),
+  appointments: many(appointments),
+  healthMetrics: many(healthMetrics),
+  aiInsights: many(aiInsights),
+  reminders: many(reminders),
+  healthReports: many(healthReports),
+}));
+
+export const healthProfilesRelations = relations(healthProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [healthProfiles.userId],
+    references: [users.id],
+  }),
+}));
+
+export const medicationsRelations = relations(medications, ({ one, many }) => ({
+  user: one(users, {
+    fields: [medications.userId],
+    references: [users.id],
+  }),
+  medicationLogs: many(medicationLogs),
+}));
+
+export const medicationLogsRelations = relations(medicationLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [medicationLogs.userId],
+    references: [users.id],
+  }),
+  medication: one(medications, {
+    fields: [medicationLogs.medicationId],
+    references: [medications.id],
+  }),
+}));
+
+export const symptomsRelations = relations(symptoms, ({ one }) => ({
+  user: one(users, {
+    fields: [symptoms.userId],
+    references: [users.id],
+  }),
+}));
+
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  user: one(users, {
+    fields: [appointments.userId],
+    references: [users.id],
+  }),
+}));
+
+export const healthMetricsRelations = relations(healthMetrics, ({ one }) => ({
+  user: one(users, {
+    fields: [healthMetrics.userId],
+    references: [users.id],
+  }),
+}));
+
+export const aiInsightsRelations = relations(aiInsights, ({ one }) => ({
+  user: one(users, {
+    fields: [aiInsights.userId],
+    references: [users.id],
+  }),
+}));
+
+export const remindersRelations = relations(reminders, ({ one }) => ({
+  user: one(users, {
+    fields: [reminders.userId],
+    references: [users.id],
+  }),
+}));
+
+export const healthReportsRelations = relations(healthReports, ({ one }) => ({
+  user: one(users, {
+    fields: [healthReports.userId],
+    references: [users.id],
+  }),
+}));
