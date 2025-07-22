@@ -1,0 +1,50 @@
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { Card } from "@/components/ui/card";
+
+export default function WelcomeSection() {
+  const { user } = useAuth();
+  
+  const { data: stats } = useQuery({
+    queryKey: ["/api/dashboard/stats"],
+    retry: false,
+  });
+
+  const firstName = user?.firstName || user?.email?.split('@')[0] || "there";
+
+  return (
+    <div className="mb-8">
+      <div className="bg-gradient-purple rounded-2xl p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-glass-dark"></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold text-white mb-2">
+            Welcome back, <span className="text-elevita-bright-teal">{firstName}</span>
+          </h2>
+          <p className="text-gray-200 text-lg mb-4">
+            Your health journey continues. Here's what's happening today.
+          </p>
+          <div className="flex flex-wrap gap-4 mt-6">
+            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+              <div className="text-elevita-bright-teal text-2xl font-bold">
+                {stats?.daysTracking || 0}
+              </div>
+              <div className="text-gray-300 text-sm">Days tracking</div>
+            </div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+              <div className="text-elevita-light-purple text-2xl font-bold">
+                {stats?.medicationsActive || 0}
+              </div>
+              <div className="text-gray-300 text-sm">Active medications</div>
+            </div>
+            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+              <div className="text-elevita-bright-teal text-2xl font-bold">
+                {stats?.upcomingAppointments || 0}
+              </div>
+              <div className="text-gray-300 text-sm">Upcoming appointments</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(0, 0%, 9%);
+  --muted: hsl(0, 0%, 96%);
+  --muted-foreground: hsl(0, 0%, 45%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(0, 0%, 9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(0, 0%, 9%);
+  --border: hsl(0, 0%, 89%);
+  --input: hsl(0, 0%, 89%);
+  --primary: hsl(178, 96%, 41%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(0, 0%, 96%);
+  --secondary-foreground: hsl(0, 0%, 9%);
+  --accent: hsl(0, 0%, 96%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(0, 85%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(0, 0%, 9%);
+  --radius: 0.5rem;
+
+  /* Elevita Color Palette */
+  --elevita-black: hsl(0, 0%, 0%);
+  --elevita-dark-gray: hsl(0, 0%, 12%);
+  --elevita-medium-gray: hsl(0, 0%, 20%);
+  --elevita-deep-purple: hsl(291, 78%, 28%);
+  --elevita-purple: hsl(275, 22%, 100%);
+  --elevita-light-purple: hsl(266, 42%, 92%);
+  --elevita-dark-teal: hsl(164, 100%, 15%);
+  --elevita-teal: hsl(178, 96%, 41%);
+  --elevita-bright-teal: hsl(157, 31%, 100%);
+  --elevita-light-teal: hsl(164, 100%, 100%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(0, 0%, 12%);
+  --muted-foreground: hsl(0, 0%, 64%);
+  --popover: hsl(0, 0%, 4%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 4%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(0, 0%, 20%);
+  --input: hsl(0, 0%, 20%);
+  --primary: hsl(178, 96%, 41%);
+  --primary-foreground: hsl(0, 0%, 0%);
+  --secondary: hsl(0, 0%, 12%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(0, 0%, 12%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62%, 30%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(0, 0%, 83%);
+
+  /* Dark mode Elevita colors */
+  --elevita-black: hsl(0, 0%, 0%);
+  --elevita-dark-gray: hsl(0, 0%, 12%);
+  --elevita-medium-gray: hsl(0, 0%, 20%);
+  --elevita-deep-purple: hsl(291, 78%, 28%);
+  --elevita-purple: hsl(275, 22%, 100%);
+  --elevita-light-purple: hsl(266, 42%, 92%);
+  --elevita-dark-teal: hsl(164, 100%, 15%);
+  --elevita-teal: hsl(178, 96%, 41%);
+  --elevita-bright-teal: hsl(157, 31%, 100%);
+  --elevita-light-teal: hsl(164, 100%, 100%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  html {
+    @apply dark;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-purple {
+    background: linear-gradient(135deg, var(--elevita-black) 0%, var(--elevita-deep-purple) 50%, var(--elevita-purple) 100%);
+  }
+  
+  .bg-gradient-teal {
+    background: linear-gradient(135deg, var(--elevita-black) 0%, var(--elevita-dark-teal) 50%, var(--elevita-teal) 100%);
+  }
+  
+  .bg-glass-dark {
+    background: linear-gradient(135deg, hsla(291, 78%, 28%, 0.1) 0%, hsla(164, 100%, 15%, 0.1) 100%);
+  }
+
+  .text-elevita-black { color: var(--elevita-black); }
+  .text-elevita-dark-gray { color: var(--elevita-dark-gray); }
+  .text-elevita-medium-gray { color: var(--elevita-medium-gray); }
+  .text-elevita-deep-purple { color: var(--elevita-deep-purple); }
+  .text-elevita-purple { color: var(--elevita-purple); }
+  .text-elevita-light-purple { color: var(--elevita-light-purple); }
+  .text-elevita-dark-teal { color: var(--elevita-dark-teal); }
+  .text-elevita-teal { color: var(--elevita-teal); }
+  .text-elevita-bright-teal { color: var(--elevita-bright-teal); }
+  .text-elevita-light-teal { color: var(--elevita-light-teal); }
+
+  .bg-elevita-black { background-color: var(--elevita-black); }
+  .bg-elevita-dark-gray { background-color: var(--elevita-dark-gray); }
+  .bg-elevita-medium-gray { background-color: var(--elevita-medium-gray); }
+  .bg-elevita-deep-purple { background-color: var(--elevita-deep-purple); }
+  .bg-elevita-purple { background-color: var(--elevita-purple); }
+  .bg-elevita-light-purple { background-color: var(--elevita-light-purple); }
+  .bg-elevita-dark-teal { background-color: var(--elevita-dark-teal); }
+  .bg-elevita-teal { background-color: var(--elevita-teal); }
+  .bg-elevita-bright-teal { background-color: var(--elevita-bright-teal); }
+  .bg-elevita-light-teal { background-color: var(--elevita-light-teal); }
+
+  .border-elevita-medium-gray { border-color: var(--elevita-medium-gray); }
+  .border-elevita-teal { border-color: var(--elevita-teal); }
+  .border-elevita-bright-teal { border-color: var(--elevita-bright-teal); }
+  .border-elevita-light-purple { border-color: var(--elevita-light-purple); }
+  .border-elevita-purple { border-color: var(--elevita-purple); }
+}
