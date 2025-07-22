@@ -72,11 +72,14 @@ export default function Dashboard() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <MedicationTracker />
-          <SymptomTracker />
+          <div className="bg-elevita-dark-gray/50 backdrop-blur-md rounded-2xl p-6 border border-elevita-medium-gray/20">
+            <h3 className="text-xl font-semibold text-white mb-6">Recent Symptoms</h3>
+            <div className="text-center py-8 text-gray-400">
+              <p>No symptoms logged yet</p>
+              <p className="text-sm mt-2">Track symptoms to identify patterns</p>
+            </div>
+          </div>
         </div>
-        
-        <ClinicalTranslator />
-        <ExportSharing />
       </div>
 
       {/* Floating Action Button */}

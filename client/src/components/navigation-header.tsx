@@ -29,15 +29,15 @@ export default function NavigationHeader() {
           <nav className="hidden md:flex space-x-6">
             {navItems.map((item) => (
               <Link key={item.path} href={item.path}>
-                <a
-                  className={`transition-colors ${
+                <span
+                  className={`transition-colors cursor-pointer ${
                     item.active
                       ? "text-elevita-bright-teal"
                       : "text-gray-300 hover:text-elevita-bright-teal"
                   }`}
                 >
                   {item.label}
-                </a>
+                </span>
               </Link>
             ))}
           </nav>
@@ -54,7 +54,7 @@ export default function NavigationHeader() {
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-full bg-gradient-purple flex items-center justify-center">
                 <span className="text-sm font-semibold text-white">
-                  {user?.firstName?.charAt(0) || user?.email?.charAt(0) || "U"}
+                  {(user as any)?.firstName?.charAt(0) || (user as any)?.email?.charAt(0) || "U"}
                 </span>
               </div>
               
