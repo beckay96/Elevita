@@ -7,9 +7,7 @@ import QuickActions from "@/components/quick-actions";
 import HealthTimeline from "@/components/health-timeline";
 import AiInsights from "@/components/ai-insights";
 import MedicationTracker from "@/components/medication-tracker";
-import SymptomTracker from "@/components/symptom-tracker";
-import ClinicalTranslator from "@/components/clinical-translator";
-import ExportSharing from "@/components/export-sharing";
+// Additional components will be added as needed
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Shield } from "lucide-react";
