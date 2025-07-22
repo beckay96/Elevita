@@ -4,7 +4,7 @@
 
 :root {
   --background: hsl(0, 0%, 100%);
-  --foreground: hsl(0, 0%, 9%);
+  --foreground: hsl(182, 100%, 5%);
   --muted: hsl(0, 0%, 96%);
   --muted-foreground: hsl(0, 0%, 45%);
   --popover: hsl(0, 0%, 100%);
@@ -38,7 +38,7 @@
 }
 
 .dark {
-  --background: hsl(0, 0%, 0%);
+  --background: hsl(184, 100%, 6%);
   --foreground: hsl(0, 0%, 98%);
   --muted: hsl(0, 0%, 12%);
   --muted-foreground: hsl(0, 0%, 64%);
@@ -59,7 +59,7 @@
   --ring: hsl(0, 0%, 83%);
 
   /* Dark mode Elevita colors */
-  --elevita-black: hsl(0, 0%, 0%);
+  --elevita-black: hsl(176, 100%, 8%);
   --elevita-dark-gray: hsl(0, 0%, 12%);
   --elevita-medium-gray: hsl(0, 0%, 20%);
   --elevita-deep-purple: hsl(291, 78%, 28%);

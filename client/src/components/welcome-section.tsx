@@ -14,7 +14,7 @@ export default function WelcomeSection() {
 
   return (
     <div className="mb-8">
-      <div className="bg-gradient-purple rounded-2xl p-8 relative overflow-hidden">
+      <div className="bg-gradient-teal rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-glass-dark"></div>
         <div className="relative z-10">
           <h2 className="text-3xl font-bold text-white mb-2">

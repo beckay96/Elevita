@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Heart, Bell } from "lucide-react";
+import elevitaLightModeLogo from "@assets/elevitaLightModeLogo.png";
 
 export default function NavigationHeader() {
   const { user } = useAuth();
@@ -20,9 +21,11 @@ export default function NavigationHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-lg bg-gradient-teal flex items-center justify-center">
-              <Heart className="text-white h-6 w-6" />
-            </div>
+            <img 
+              src={elevitaLightModeLogo} 
+              alt="Elevita Logo" 
+              className="h-10 w-auto"
+            />
             <h1 className="text-xl font-bold text-white">Elevita</h1>
           </div>
           
@@ -52,7 +55,7 @@ export default function NavigationHeader() {
             </Button>
             
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-purple flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-teal flex items-center justify-center">
                 <span className="text-sm font-semibold text-white">
                   {(user as any)?.firstName?.charAt(0) || (user as any)?.email?.charAt(0) || "U"}
                 </span>
