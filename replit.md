@@ -23,6 +23,7 @@ A sophisticated healthcare AI platform with enterprise-grade dark design helping
 - ✅ **Professional Dashboard**: Dedicated dashboard for healthcare professionals with specialized tools
 - ✅ **Elevita's Ears**: AI-powered recording and transcription system for medical consultations
 - ✅ **Transcription Database**: Full CRUD operations for consultation transcriptions with AI summaries
+- ✅ **AI Chat Assistant**: Context-aware AI chat popup accessible from + icon with role-based quick prompts
 
 ### Technology Stack
 - **Frontend**: React + TypeScript + Tailwind CSS + shadcn/ui
@@ -54,8 +55,9 @@ The application includes comprehensive health tracking tables:
 - **View Switching**: Healthcare professionals can toggle between patient and professional views
 - **Dark/Light Mode**: Professional healthcare interface with theme switching
 - **Comprehensive Health Tracking**: Medications, symptoms, appointments, and metrics
-- **Professional Tools**: Enhanced features for healthcare providers
+- **Professional Tools**: Enhanced features for healthcare providers including Elevita's Ears
 - **AI-Powered Insights**: Health pattern analysis and recommendations
+- **AI Chat Assistant**: Context-aware chat with role-based quick prompts for patient and professional guidance
 - **Health Timeline**: Comprehensive health data visualization
 - **Export and Sharing**: Provider handover summaries and reports
 
