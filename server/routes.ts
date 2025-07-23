@@ -520,68 +520,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Access denied: Professional features only" });
       }
 
-      // Mock AI transcription and summary for demo purposes
-      const { title, description } = req.body;
-      const mockTranscript = `Patient Consultation Transcript
-
-Dr. Smith: Good morning, how are you feeling today?
-
-Patient: I've been experiencing some chest discomfort over the past few days. It's not severe, but it's concerning me.
-
-Dr. Smith: Can you describe the discomfort? Is it sharp, dull, or pressure-like?
-
-Patient: It feels more like pressure, and it happens mostly when I'm walking upstairs or doing physical activity.
-
-Dr. Smith: Have you noticed any shortness of breath, nausea, or sweating along with this discomfort?
-
-Patient: Yes, I do get a bit short of breath, especially during the episodes.
-
-Dr. Smith: I see. Let's review your medical history. You mentioned you have high blood pressure, correct?
-
-Patient: Yes, I take medication for that. Lisinopril, I believe.
-
-Dr. Smith: Good. Based on your symptoms, I'd like to run some tests including an EKG and potentially a stress test. We'll also review your current medications and make sure they're optimized.
-
-Patient: That sounds good. Should I be worried?
-
-Dr. Smith: We're being thorough to ensure your heart health. These symptoms warrant investigation, but many conditions are very manageable with proper treatment.
-
-End of transcript.`;
-
-      const mockAiSummary = `**Chief Complaint:** Patient reports chest discomfort with exertional dyspnea over the past few days.
-
-**Symptoms:** 
-- Pressure-like chest discomfort triggered by physical activity
-- Associated shortness of breath during episodes
-- No mention of nausea or diaphoresis
-
-**Medical History:**
-- Hypertension, currently treated with Lisinopril
-
-**Assessment & Plan:**
-- Ordered diagnostic workup including EKG and stress test
-- Medication review scheduled
-- Patient counseled on symptoms requiring immediate attention
-- Follow-up arranged pending test results
-
-**Clinical Impression:** Possible exertional angina vs. other cardiac etiology requiring further evaluation.
-
-**Next Steps:** 
-1. Complete diagnostic testing
-2. Medication optimization
-3. Patient education on when to seek immediate care`;
-
-      const mockSpeakers = ["Dr. Smith", "Patient"];
-      const mockDuration = 900; // 15 minutes
-
+      const { title, description, duration } = req.body;
+      
+      // TODO: Implement actual audio processing and AI transcription
+      // For now, create a placeholder entry that will be updated when audio processing is implemented
       const transcription = await storage.createTranscription({
         userId,
         title: title || 'Untitled Recording',
         description: description || '',
-        transcript: mockTranscript,
-        aiSummary: mockAiSummary,
-        duration: mockDuration,
-        speakers: mockSpeakers,
+        transcript: '', // Will be populated by AI transcription service
+        aiSummary: '', // Will be populated by AI analysis service
+        duration: parseInt(duration) || 0,
+        speakers: [], // Will be populated by speaker identification service
         recordedAt: new Date(),
       });
 

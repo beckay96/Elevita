@@ -14,7 +14,8 @@ export default function MedicationTracker() {
 
   const activeMedications = medications?.filter((med: Medication) => med.isActive) || [];
 
-  const getAdherence = () => Math.floor(Math.random() * 20) + 80; // Mock adherence calculation
+  // TODO: Implement actual adherence calculation from medication logs
+  const getAdherence = () => 0; // Placeholder - needs real calculation
 
   return (
     <div>
