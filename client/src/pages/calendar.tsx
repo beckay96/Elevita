@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarScheduler } from "@/components/calendar-scheduler";
+import { EnhancedCalendarScheduler } from "@/components/enhanced-calendar-scheduler";
 import { ElevitaEars } from "@/components/elevita-ears";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,7 @@ export function CalendarPage() {
         </p>
       </div>
       
-      <CalendarScheduler onStartTranscription={handleStartTranscription} />
+      <EnhancedCalendarScheduler onStartTranscription={handleStartTranscription} />
     </div>
   );
 }

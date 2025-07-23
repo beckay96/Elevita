@@ -40,7 +40,7 @@ import {
   type InsertNotificationSettings,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, gte, lte } from "drizzle-orm";
+import { eq, desc, and, gte, lte, lt, sql, count } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -611,6 +611,67 @@ export class DatabaseStorage implements IStorage {
   async getPatients(): Promise<User[]> {
     return await db.select().from(users)
       .where(eq(users.isHealthcareProfessional, false));
+  }
+
+  // Create appointment
+  async createAppointment(appointmentData: any): Promise<Appointment> {
+    const [appointment] = await db
+      .insert(appointments)
+      .values(appointmentData)
+      .returning();
+    return appointment;
+  }
+
+  // Get appointments by date
+  async getAppointmentsByDate(date?: string): Promise<Appointment[]> {
+    if (date) {
+      const startDate = new Date(date);
+      const endDate = new Date(date);
+      endDate.setDate(endDate.getDate() + 1);
+      
+      return await db
+        .select()
+        .from(appointments)
+        .where(
+          and(
+            gte(appointments.appointmentDate, startDate),
+            lt(appointments.appointmentDate, endDate)
+          )
+        )
+        .orderBy(appointments.appointmentDate);
+    } else {
+      return await db
+        .select()
+        .from(appointments)
+        .orderBy(appointments.appointmentDate);
+    }
+  }
+
+  // Enhanced transcriptions by date for calendar integration
+  async getTranscriptionsByDate(userId: string, date?: string): Promise<Transcription[]> {
+    if (date) {
+      const startDate = new Date(date);
+      const endDate = new Date(date);
+      endDate.setDate(endDate.getDate() + 1);
+      
+      return await db
+        .select()
+        .from(transcriptions)
+        .where(
+          and(
+            eq(transcriptions.userId, userId),
+            gte(transcriptions.createdAt, startDate),
+            lt(transcriptions.createdAt, endDate)
+          )
+        )
+        .orderBy(desc(transcriptions.createdAt));
+    } else {
+      return await db
+        .select()
+        .from(transcriptions)
+        .where(eq(transcriptions.userId, userId))
+        .orderBy(desc(transcriptions.createdAt));
+    }
   }
 
   // Notification operations

@@ -756,6 +756,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new appointment
+  app.post('/api/appointments', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const appointmentData = req.body;
+      const appointment = await storage.createAppointment(appointmentData);
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      res.status(500).json({ message: "Failed to create appointment" });
+    }
+  });
+
+  // Get appointments by date
+  app.get('/api/appointments/:date?', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const date = req.params.date;
+      const appointments = await storage.getAppointmentsByDate(date);
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      res.status(500).json({ message: "Failed to fetch appointments" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

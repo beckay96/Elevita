@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { SmartAppointmentForm } from "./smart-appointment-form";
+import { QuickTranscriptionStarter } from "./quick-transcription-starter";
 import { 
   Calendar,
   Clock,
@@ -19,7 +21,9 @@ import {
   FileText,
   Edit3,
   Save,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import type { Appointment, Transcription, User as UserType } from "@shared/schema";
 
