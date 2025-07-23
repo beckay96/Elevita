@@ -9,6 +9,7 @@ import {
   aiInsights,
   reminders,
   healthReports,
+  transcriptions,
   type User,
   type UpsertUser,
   type HealthProfile,
@@ -29,6 +30,8 @@ import {
   type InsertReminder,
   type HealthReport,
   type InsertHealthReport,
+  type Transcription,
+  type InsertTranscription,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte } from "drizzle-orm";
@@ -90,6 +93,13 @@ export interface IStorage {
   // Health Report operations
   getHealthReports(userId: string): Promise<HealthReport[]>;
   createHealthReport(report: InsertHealthReport): Promise<HealthReport>;
+
+  // Transcription operations (Elevita's Ears)
+  getTranscriptions(userId: string): Promise<Transcription[]>;
+  getTranscription(id: number): Promise<Transcription | undefined>;
+  createTranscription(transcription: InsertTranscription): Promise<Transcription>;
+  updateTranscription(id: number, updates: Partial<InsertTranscription>): Promise<Transcription>;
+  deleteTranscription(id: number): Promise<void>;
   
   // Dashboard statistics
   getDashboardStats(userId: string): Promise<{
@@ -504,6 +514,43 @@ export class DatabaseStorage implements IStorage {
     return events
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .slice(0, limit);
+  }
+
+  // Transcription operations (Elevita's Ears)
+  async getTranscriptions(userId: string): Promise<Transcription[]> {
+    return await db.select().from(transcriptions)
+      .where(eq(transcriptions.userId, userId))
+      .orderBy(desc(transcriptions.recordedAt));
+  }
+
+  async getTranscription(id: number): Promise<Transcription | undefined> {
+    const [transcription] = await db.select().from(transcriptions)
+      .where(eq(transcriptions.id, id));
+    return transcription || undefined;
+  }
+
+  async createTranscription(transcription: InsertTranscription): Promise<Transcription> {
+    const [newTranscription] = await db
+      .insert(transcriptions)
+      .values(transcription)
+      .returning();
+    return newTranscription;
+  }
+
+  async updateTranscription(id: number, updates: Partial<InsertTranscription>): Promise<Transcription> {
+    const [updated] = await db
+      .update(transcriptions)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(transcriptions.id, id))
+      .returning();
+    if (!updated) {
+      throw new Error("Transcription not found");
+    }
+    return updated;
+  }
+
+  async deleteTranscription(id: number): Promise<void> {
+    await db.delete(transcriptions).where(eq(transcriptions.id, id));
   }
 }
 

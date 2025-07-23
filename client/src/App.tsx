@@ -12,6 +12,7 @@ import Medications from "@/pages/medications";
 import Symptoms from "@/pages/symptoms";
 import Timeline from "@/pages/timeline";
 import Reports from "@/pages/reports";
+import ProfessionalDashboard from "@/pages/professional-dashboard";
 import SetupWizard from "@/components/setup-wizard";
 
 function Router() {
@@ -19,6 +20,9 @@ function Router() {
 
   // Check if setup is needed
   const needsSetup = isAuthenticated && user && !(user as any)?.setupCompleted;
+  
+  // Check if user is in professional view
+  const isProfessionalView = (user as any)?.currentView === "professional";
 
   return (
     <Switch>
@@ -28,7 +32,8 @@ function Router() {
         <Route path="*" component={SetupWizard} />
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={isProfessionalView ? ProfessionalDashboard : Dashboard} />
+          <Route path="/professional" component={ProfessionalDashboard} />
           <Route path="/medications" component={Medications} />
           <Route path="/symptoms" component={Symptoms} />
           <Route path="/timeline" component={Timeline} />

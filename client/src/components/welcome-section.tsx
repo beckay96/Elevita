@@ -14,7 +14,7 @@ export default function WelcomeSection() {
 
   return (
     <div className="mb-8">
-      <div className="bg-gradient-light dark:bg-gradient-teal rounded-2xl p-8 relative overflow-hidden">
+      <div className="bg-gradient-light/80 dark:bg-gradient-teal rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-glass-dark"></div>
         <div className="relative z-10">
           <h2 className="text-3xl font-bold text-black dark:text-white mb-2">
@@ -24,19 +24,19 @@ export default function WelcomeSection() {
             Your health journey continues. Here's what's happening today.
           </p>
           <div className="flex flex-wrap gap-4 mt-6">
-            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+            <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
               <div className="text-teal-300 text-2xl font-bold">
                 {stats?.daysTracking || 0}
               </div>
               <div className="text-gray-100 text-sm">Days tracking</div>
             </div>
-            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+            <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
               <div className="text-elevita-light-purple text-2xl font-bold">
                 {stats?.medicationsActive || 0}
               </div>
               <div className="text-gray-100 text-sm">Active medications</div>
             </div>
-            <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
+            <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
               <div className="text-elevita-teal text-2xl font-bold">
                 {stats?.upcomingAppointments || 0}
               </div>

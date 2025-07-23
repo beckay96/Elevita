@@ -492,6 +492,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Transcription routes for Elevita's Ears
+  app.get('/api/transcriptions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      // Check if user is healthcare professional
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const transcriptions = await storage.getTranscriptions(userId);
+      res.json(transcriptions);
+    } catch (error) {
+      console.error("Error fetching transcriptions:", error);
+      res.status(500).json({ message: "Failed to fetch transcriptions" });
+    }
+  });
+
+  app.post('/api/transcriptions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+
+      // Mock AI transcription and summary for demo purposes
+      const { title, description } = req.body;
+      const mockTranscript = `Patient Consultation Transcript
+
+Dr. Smith: Good morning, how are you feeling today?
+
+Patient: I've been experiencing some chest discomfort over the past few days. It's not severe, but it's concerning me.
+
+Dr. Smith: Can you describe the discomfort? Is it sharp, dull, or pressure-like?
+
+Patient: It feels more like pressure, and it happens mostly when I'm walking upstairs or doing physical activity.
+
+Dr. Smith: Have you noticed any shortness of breath, nausea, or sweating along with this discomfort?
+
+Patient: Yes, I do get a bit short of breath, especially during the episodes.
+
+Dr. Smith: I see. Let's review your medical history. You mentioned you have high blood pressure, correct?
+
+Patient: Yes, I take medication for that. Lisinopril, I believe.
+
+Dr. Smith: Good. Based on your symptoms, I'd like to run some tests including an EKG and potentially a stress test. We'll also review your current medications and make sure they're optimized.
+
+Patient: That sounds good. Should I be worried?
+
+Dr. Smith: We're being thorough to ensure your heart health. These symptoms warrant investigation, but many conditions are very manageable with proper treatment.
+
+End of transcript.`;
+
+      const mockAiSummary = `**Chief Complaint:** Patient reports chest discomfort with exertional dyspnea over the past few days.
+
+**Symptoms:** 
+- Pressure-like chest discomfort triggered by physical activity
+- Associated shortness of breath during episodes
+- No mention of nausea or diaphoresis
+
+**Medical History:**
+- Hypertension, currently treated with Lisinopril
+
+**Assessment & Plan:**
+- Ordered diagnostic workup including EKG and stress test
+- Medication review scheduled
+- Patient counseled on symptoms requiring immediate attention
+- Follow-up arranged pending test results
+
+**Clinical Impression:** Possible exertional angina vs. other cardiac etiology requiring further evaluation.
+
+**Next Steps:** 
+1. Complete diagnostic testing
+2. Medication optimization
+3. Patient education on when to seek immediate care`;
+
+      const mockSpeakers = ["Dr. Smith", "Patient"];
+      const mockDuration = 900; // 15 minutes
+
+      const transcription = await storage.createTranscription({
+        userId,
+        title: title || 'Untitled Recording',
+        description: description || '',
+        transcript: mockTranscript,
+        aiSummary: mockAiSummary,
+        duration: mockDuration,
+        speakers: mockSpeakers,
+        recordedAt: new Date(),
+      });
+
+      res.json(transcription);
+    } catch (error) {
+      console.error("Error creating transcription:", error);
+      res.status(500).json({ message: "Failed to create transcription" });
+    }
+  });
+
+  app.delete('/api/transcriptions/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const transcriptionId = parseInt(req.params.id);
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const transcription = await storage.getTranscription(transcriptionId);
+      if (!transcription || transcription.userId !== userId) {
+        return res.status(404).json({ message: "Transcription not found" });
+      }
+      
+      await storage.deleteTranscription(transcriptionId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting transcription:", error);
+      res.status(500).json({ message: "Failed to delete transcription" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
