@@ -10,6 +10,8 @@ import {
   reminders,
   healthReports,
   transcriptions,
+  notifications,
+  notificationSettings,
   type User,
   type UpsertUser,
   type HealthProfile,
@@ -32,6 +34,10 @@ import {
   type InsertHealthReport,
   type Transcription,
   type InsertTranscription,
+  type Notification,
+  type InsertNotification,
+  type NotificationSettings,
+  type InsertNotificationSettings,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte } from "drizzle-orm";
@@ -100,6 +106,22 @@ export interface IStorage {
   createTranscription(transcription: InsertTranscription): Promise<Transcription>;
   updateTranscription(id: number, updates: Partial<InsertTranscription>): Promise<Transcription>;
   deleteTranscription(id: number): Promise<void>;
+
+  // Notification operations
+  getNotifications(userId: string, limit?: number): Promise<Notification[]>;
+  getUnreadNotifications(userId: string): Promise<Notification[]>;
+  createNotification(notification: InsertNotification): Promise<Notification>;
+  markNotificationAsRead(id: number): Promise<void>;
+  markAllNotificationsAsRead(userId: string): Promise<void>;
+  deleteNotification(id: number): Promise<void>;
+
+  // Notification settings operations
+  getNotificationSettings(userId: string): Promise<NotificationSettings | undefined>;
+  upsertNotificationSettings(userId: string, settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings>;
+  
+  // Notification triggering
+  scheduleNotification(notification: InsertNotification): Promise<Notification>;
+  processScheduledNotifications(): Promise<void>;
   
   // Dashboard statistics
   getDashboardStats(userId: string): Promise<{
@@ -551,6 +573,86 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTranscription(id: number): Promise<void> {
     await db.delete(transcriptions).where(eq(transcriptions.id, id));
+  }
+
+  // Notification operations
+  async getNotifications(userId: string, limit: number = 50): Promise<Notification[]> {
+    return await db.select().from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt))
+      .limit(limit);
+  }
+
+  async getUnreadNotifications(userId: string): Promise<Notification[]> {
+    return await db.select().from(notifications)
+      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)))
+      .orderBy(desc(notifications.createdAt));
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values(notification)
+      .returning();
+    return newNotification;
+  }
+
+  async markNotificationAsRead(id: number): Promise<void> {
+    await db
+      .update(notifications)
+      .set({ isRead: true, readAt: new Date() })
+      .where(eq(notifications.id, id));
+  }
+
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await db
+      .update(notifications)
+      .set({ isRead: true, readAt: new Date() })
+      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  }
+
+  async deleteNotification(id: number): Promise<void> {
+    await db.delete(notifications).where(eq(notifications.id, id));
+  }
+
+  // Notification settings operations
+  async getNotificationSettings(userId: string): Promise<NotificationSettings | undefined> {
+    const [settings] = await db.select().from(notificationSettings)
+      .where(eq(notificationSettings.userId, userId));
+    return settings || undefined;
+  }
+
+  async upsertNotificationSettings(userId: string, settings: Partial<InsertNotificationSettings>): Promise<NotificationSettings> {
+    const [upserted] = await db
+      .insert(notificationSettings)
+      .values({ ...settings, userId })
+      .onConflictDoUpdate({
+        target: notificationSettings.userId,
+        set: { ...settings, updatedAt: new Date() },
+      })
+      .returning();
+    return upserted;
+  }
+
+  async scheduleNotification(notification: InsertNotification): Promise<Notification> {
+    // For scheduled notifications, set scheduledFor timestamp
+    return await this.createNotification(notification);
+  }
+
+  async processScheduledNotifications(): Promise<void> {
+    const now = new Date();
+    const scheduledNotifications = await db.select().from(notifications)
+      .where(and(
+        gte(notifications.scheduledFor, now),
+        eq(notifications.isRead, false)
+      ));
+
+    // Process each scheduled notification (send push notification, email, etc.)
+    // This would integrate with notification services
+    for (const notification of scheduledNotifications) {
+      // TODO: Implement actual notification sending (push, email, etc.)
+      console.log(`Processing notification: ${notification.title} for user: ${notification.userId}`);
+    }
   }
 }
 

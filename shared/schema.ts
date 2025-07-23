@@ -194,6 +194,40 @@ export const transcriptions = pgTable("transcriptions", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Notifications table
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type").notNull(), // medication_reminder, appointment_reminder, health_alert, ai_insight, etc.
+  title: varchar("title").notNull(),
+  message: text("message").notNull(),
+  isRead: boolean("is_read").default(false),
+  isActionable: boolean("is_actionable").default(false), // Can user take action on this notification
+  actionUrl: varchar("action_url"), // URL to navigate when notification is clicked
+  scheduledFor: timestamp("scheduled_for"), // For future notifications
+  metadata: jsonb("metadata"), // Additional data like medication_id, appointment_id, etc.
+  createdAt: timestamp("created_at").defaultNow(),
+  readAt: timestamp("read_at"),
+});
+
+// Notification settings table
+export const notificationSettings = pgTable("notification_settings", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  medicationReminders: boolean("medication_reminders").default(true),
+  appointmentReminders: boolean("appointment_reminders").default(true),
+  healthAlerts: boolean("health_alerts").default(true),
+  aiInsights: boolean("ai_insights").default(true),
+  weeklyReports: boolean("weekly_reports").default(false),
+  emergencyAlerts: boolean("emergency_alerts").default(true),
+  reminderTime: varchar("reminder_time").default("09:00"), // Default reminder time
+  reminderFrequency: varchar("reminder_frequency").default("daily"), // daily, weekly, custom
+  emailNotifications: boolean("email_notifications").default(false),
+  pushNotifications: boolean("push_notifications").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Type exports for frontend use
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -227,6 +261,12 @@ export type HealthReport = typeof healthReports.$inferSelect;
 
 export type InsertTranscription = typeof transcriptions.$inferInsert;
 export type Transcription = typeof transcriptions.$inferSelect;
+
+export type InsertNotification = typeof notifications.$inferInsert;
+export type Notification = typeof notifications.$inferSelect;
+
+export type InsertNotificationSettings = typeof notificationSettings.$inferInsert;
+export type NotificationSettings = typeof notificationSettings.$inferSelect;
 
 // Validation schemas
 export const insertHealthProfileSchema = createInsertSchema(healthProfiles).omit({

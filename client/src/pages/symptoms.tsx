@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { NotificationService } from "@/lib/notifications";
 import NavigationHeader from "@/components/navigation-header";
 import SymptomForm from "@/components/symptom-form";
 import { Button } from "@/components/ui/button";

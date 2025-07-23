@@ -12,6 +12,7 @@ import Medications from "@/pages/medications";
 import Symptoms from "@/pages/symptoms";
 import Timeline from "@/pages/timeline";
 import Reports from "@/pages/reports";
+import Settings from "@/pages/settings";
 import ProfessionalDashboard from "@/pages/professional-dashboard";
 import SetupWizard from "@/components/setup-wizard";
 
@@ -38,6 +39,7 @@ function Router() {
           <Route path="/symptoms" component={Symptoms} />
           <Route path="/timeline" component={Timeline} />
           <Route path="/reports" component={Reports} />
+          <Route path="/settings" component={Settings} />
           <Route path="/landing" component={Landing} />
         </>
       )}

@@ -2,9 +2,10 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/theme-context";
-import { Bell, ChevronDown, Home, Calendar, Pill, Activity, FileText, Sun, Moon, Monitor, LogOut, Plus } from "lucide-react";
+import { Bell, ChevronDown, Home, Calendar, Pill, Activity, FileText, Sun, Moon, Monitor, LogOut, Plus, Settings } from "lucide-react";
 import { ViewToggle } from "@/components/view-toggle";
 import AIChatPopup from "@/components/ai-chat-popup";
+import NotificationPopup from "@/components/notification-popup";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -34,6 +35,7 @@ export default function NavigationHeader() {
     { path: "/medications", label: "Medications", icon: Pill },
     { path: "/symptoms", label: "Symptoms", icon: Activity },
     { path: "/reports", label: "Reports", icon: FileText },
+    { path: "/settings", label: "Settings", icon: Settings },
   ];
 
   return (
@@ -65,13 +67,7 @@ export default function NavigationHeader() {
               <Plus className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </Button>
             
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="h-9 w-9 rounded-lg"
-            >
-              <Bell className="h-4 w-4 text-primary" />
-            </Button>
+            <NotificationPopup />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
