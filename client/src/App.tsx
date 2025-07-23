@@ -12,14 +12,20 @@ import Medications from "@/pages/medications";
 import Symptoms from "@/pages/symptoms";
 import Timeline from "@/pages/timeline";
 import Reports from "@/pages/reports";
+import SetupWizard from "@/components/setup-wizard";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+
+  // Check if setup is needed
+  const needsSetup = isAuthenticated && user && !(user as any)?.setupCompleted;
 
   return (
     <Switch>
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
+      ) : needsSetup ? (
+        <Route path="*" component={SetupWizard} />
       ) : (
         <>
           <Route path="/" component={Dashboard} />
@@ -27,6 +33,7 @@ function Router() {
           <Route path="/symptoms" component={Symptoms} />
           <Route path="/timeline" component={Timeline} />
           <Route path="/reports" component={Reports} />
+          <Route path="/landing" component={Landing} />
         </>
       )}
       <Route component={NotFound} />

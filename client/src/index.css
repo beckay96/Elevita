@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 98%);
-  --foreground: hsl(184, 100%, 8%);
-  --muted: hsl(0, 0%, 93%);
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(182, 100%, 5%);
+  --muted: hsl(0, 0%, 96%);
   --muted-foreground: hsl(0, 0%, 45%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(184, 100%, 8%);
+  --popover-foreground: hsl(0, 0%, 9%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(184, 100%, 8%);
-  --border: hsl(0, 0%, 87%);
-  --input: hsl(0, 0%, 87%);
+  --card-foreground: hsl(0, 0%, 9%);
+  --border: hsl(0, 0%, 89%);
+  --input: hsl(0, 0%, 89%);
   --primary: hsl(178, 96%, 41%);
-  --primary-foreground: hsl(0, 0%, 4%);
-  --secondary: hsl(0, 0%, 93%);
-  --secondary-foreground: hsl(184, 100%, 8%);
-  --accent: hsl(0, 0%, 93%);
-  --accent-foreground: hsl(184, 100%, 8%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(0, 0%, 96%);
+  --secondary-foreground: hsl(0, 0%, 9%);
+  --accent: hsl(0, 0%, 96%);
+  --accent-foreground: hsl(0, 0%, 9%);
   --destructive: hsl(0, 85%, 60%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(178, 96%, 41%);
+  --ring: hsl(0, 0%, 9%);
   --radius: 0.5rem;
 
   /* Elevita Color Palette */
@@ -29,12 +29,12 @@
   --elevita-dark-gray: hsl(0, 0%, 12%);
   --elevita-medium-gray: hsl(0, 0%, 20%);
   --elevita-deep-purple: hsl(291, 78%, 28%);
-  --elevita-purple: hsl(275, 22%, 100%);
-  --elevita-light-purple: hsl(266, 42%, 92%);
+  --elevita-purple: hsl(275, 22%, 70%);
+  --elevita-light-purple: hsl(266, 42%, 80%);
   --elevita-dark-teal: hsl(164, 100%, 15%);
   --elevita-teal: hsl(178, 96%, 41%);
-  --elevita-bright-teal: hsl(157, 31%, 100%);
-  --elevita-light-teal: hsl(164, 100%, 100%);
+  --elevita-bright-teal: hsl(157, 31%, 80%);
+  --elevita-light-teal: hsl(164, 100%, 90%);
 }
 
 .dark {
@@ -63,12 +63,12 @@
   --elevita-dark-gray: hsl(0, 0%, 12%);
   --elevita-medium-gray: hsl(0, 0%, 20%);
   --elevita-deep-purple: hsl(291, 78%, 28%);
-  --elevita-purple: hsl(275, 22%, 100%);
-  --elevita-light-purple: hsl(266, 42%, 92%);
+  --elevita-purple: hsl(275, 22%, 70%);
+  --elevita-light-purple: hsl(266, 42%, 80%);
   --elevita-dark-teal: hsl(164, 100%, 15%);
   --elevita-teal: hsl(178, 96%, 41%);
-  --elevita-bright-teal: hsl(157, 31%, 100%);
-  --elevita-light-teal: hsl(164, 100%, 100%);
+  --elevita-bright-teal: hsl(170, 100%, 80%);
+  --elevita-light-teal: hsl(164, 100%, 90%);
 }
 
 @layer base {
@@ -94,6 +94,12 @@
   .bg-gradient-teal {
     background: linear-gradient(135deg, var(--elevita-black) 0%, var(--elevita-dark-teal) 50%, var(--elevita-teal) 100%);
   }
+
+  
+  .bg-gradient-light {
+    background: linear-gradient(135deg, var(--elevita-light-purple) 0%, var(--elevita-bright-teal) 50%, var(--elevita-light-purple) 100%);
+  }
+
   
   .bg-glass-dark {
     background: linear-gradient(135deg, hsla(291, 78%, 28%, 0.1) 0%, hsla(164, 100%, 15%, 0.1) 100%);

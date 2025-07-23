@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/theme-context";
 import { Bell, ChevronDown, Home, Calendar, Pill, Activity, FileText, Sun, Moon, Monitor, LogOut } from "lucide-react";
+import { ViewToggle } from "@/components/view-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +44,8 @@ export default function NavigationHeader() {
           </Link>
           
           <div className="flex items-center space-x-4">
+            <ViewToggle />
+            
             <Button 
               variant="ghost" 
               size="sm"

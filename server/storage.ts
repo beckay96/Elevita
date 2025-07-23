@@ -38,6 +38,10 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   
+  // User setup operations
+  updateUserSetup(userId: string, updates: Partial<UpsertUser>): Promise<User>;
+  completeUserSetup(userId: string): Promise<User>;
+  
   // Health Profile operations
   getHealthProfile(userId: string): Promise<HealthProfile | undefined>;
   createHealthProfile(profile: InsertHealthProfile): Promise<HealthProfile>;
@@ -129,6 +133,35 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  // User setup operations
+  async updateUserSetup(userId: string, updates: Partial<UpsertUser>): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    if (!updated) {
+      throw new Error("User not found");
+    }
+    return updated;
+  }
+
+  async completeUserSetup(userId: string): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({ 
+        setupCompleted: true, 
+        setupStep: 3,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    if (!updated) {
+      throw new Error("User not found");
+    }
+    return updated;
   }
 
   // Health Profile operations

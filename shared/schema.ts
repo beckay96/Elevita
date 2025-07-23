@@ -33,6 +33,17 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  // User role and professional fields
+  userRole: varchar("user_role").default("patient"), // patient, doctor, nurse, clinician
+  isHealthcareProfessional: boolean("is_healthcare_professional").default(false),
+  licenseNumber: varchar("license_number"),
+  specialty: varchar("specialty"),
+  institution: varchar("institution"),
+  yearsExperience: integer("years_experience"),
+  // Setup completion status
+  setupCompleted: boolean("setup_completed").default(false),
+  setupStep: integer("setup_step").default(0), // 0 = not started, 1 = role selection, 2 = profile, 3 = complete
+  currentView: varchar("current_view").default("patient"), // patient or professional
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -236,6 +247,28 @@ export const insertReminderSchema = createInsertSchema(reminders).omit({
   id: true,
   createdAt: true,
 });
+
+// User setup wizard schemas
+export const userRoleSelectionSchema = z.object({
+  userRole: z.enum(["patient", "doctor", "nurse", "clinician"]),
+  isHealthcareProfessional: z.boolean().default(false),
+});
+
+export const professionalInfoSchema = z.object({
+  licenseNumber: z.string().optional(),
+  specialty: z.string().optional(),
+  institution: z.string().optional(),
+  yearsExperience: z.number().min(0).optional(),
+});
+
+export const basicProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+});
+
+export type UserRoleSelection = z.infer<typeof userRoleSelectionSchema>;
+export type ProfessionalInfo = z.infer<typeof professionalInfoSchema>;
+export type BasicProfile = z.infer<typeof basicProfileSchema>;
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({

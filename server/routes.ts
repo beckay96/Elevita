@@ -33,6 +33,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Setup Wizard routes
+  app.post('/api/setup/role', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { userRole, isHealthcareProfessional } = req.body;
+      
+      const updatedUser = await storage.updateUserSetup(userId, {
+        userRole,
+        isHealthcareProfessional,
+        setupStep: 1,
+      });
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
+  app.post('/api/setup/profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName } = req.body;
+      
+      const updatedUser = await storage.updateUserSetup(userId, {
+        firstName,
+        lastName,
+        setupStep: 2,
+      });
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Failed to update user profile" });
+    }
+  });
+
+  app.post('/api/setup/professional', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { licenseNumber, specialty, institution, yearsExperience } = req.body;
+      
+      const updatedUser = await storage.updateUserSetup(userId, {
+        licenseNumber,
+        specialty,
+        institution,
+        yearsExperience,
+        setupStep: 3,
+      });
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating professional info:", error);
+      res.status(500).json({ message: "Failed to update professional info" });
+    }
+  });
+
+  app.post('/api/setup/complete', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.completeUserSetup(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error completing setup:", error);
+      res.status(500).json({ message: "Failed to complete setup" });
+    }
+  });
+
+  app.post('/api/user/switch-view', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { currentView } = req.body;
+      
+      const updatedUser = await storage.updateUserSetup(userId, {
+        currentView,
+      });
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error switching view:", error);
+      res.status(500).json({ message: "Failed to switch view" });
+    }
+  });
+
   // Health Profile routes
   app.get('/api/health-profile', isAuthenticated, async (req: any, res) => {
     try {
