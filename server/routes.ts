@@ -496,6 +496,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/transcriptions', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const { date } = req.query;
       
       // Check if user is healthcare professional
       const user = await storage.getUser(userId);
@@ -503,7 +504,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Access denied: Professional features only" });
       }
       
-      const transcriptions = await storage.getTranscriptions(userId);
+      let transcriptions;
+      if (date) {
+        transcriptions = await storage.getTranscriptionsByDate(userId, date as string);
+      } else {
+        transcriptions = await storage.getTranscriptions(userId);
+      }
       res.json(transcriptions);
     } catch (error) {
       console.error("Error fetching transcriptions:", error);
@@ -520,12 +526,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Access denied: Professional features only" });
       }
 
-      const { title, description, duration } = req.body;
+      const { title, description, duration, patientId, appointmentId } = req.body;
       
       // TODO: Implement actual audio processing and speech-to-text transcription
       // For now, create a placeholder entry that will be updated when audio processing is implemented
       const transcription = await storage.createTranscription({
         userId,
+        patientId: patientId || null,
+        appointmentId: appointmentId || null,
         title: title || 'Untitled Recording',
         description: description || '',
         transcript: '', // Will be populated by speech-to-text service
@@ -661,6 +669,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating notification settings:", error);
       res.status(500).json({ message: "Failed to update notification settings" });
+    }
+  });
+
+  // Update transcription
+  app.patch('/api/transcriptions/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const transcriptionId = parseInt(req.params.id);
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const transcription = await storage.getTranscription(transcriptionId);
+      if (!transcription || transcription.userId !== userId) {
+        return res.status(404).json({ message: "Transcription not found" });
+      }
+      
+      const updated = await storage.updateTranscription(transcriptionId, req.body);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating transcription:", error);
+      res.status(500).json({ message: "Failed to update transcription" });
+    }
+  });
+
+  // Get appointments by date
+  app.get('/api/appointments', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { date } = req.query;
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      let appointments;
+      if (date) {
+        appointments = await storage.getAppointmentsByDate(userId, date as string);
+      } else {
+        appointments = await storage.getAppointments(userId);
+      }
+      res.json(appointments);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      res.status(500).json({ message: "Failed to fetch appointments" });
+    }
+  });
+
+  // Create appointment
+  app.post('/api/appointments', isAuthenticated, async (req: any, res) => {
+    try {
+      const creatorId = req.user.claims.sub;
+      
+      const user = await storage.getUser(creatorId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const appointment = await storage.createAppointment(req.body);
+      res.json(appointment);
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      res.status(500).json({ message: "Failed to create appointment" });
+    }
+  });
+
+  // Get patients (non-professional users)
+  app.get('/api/patients', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      
+      const user = await storage.getUser(userId);
+      if (!user?.isHealthcareProfessional) {
+        return res.status(403).json({ message: "Access denied: Professional features only" });
+      }
+      
+      const patients = await storage.getPatients();
+      res.json(patients);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+      res.status(500).json({ message: "Failed to fetch patients" });
     }
   });
 

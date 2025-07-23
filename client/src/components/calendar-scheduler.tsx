@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { format, startOfDay, addDays, isSameDay } from "date-fns";
+import { format, addDays, isSameDay } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,19 +49,19 @@ export function CalendarScheduler({ onStartTranscription }: CalendarSchedulerPro
   });
 
   // Get appointments for selected date
-  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery({
+  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
     queryKey: ["/api/appointments", format(selectedDate, "yyyy-MM-dd")],
     queryFn: () => apiRequest("GET", `/api/appointments?date=${format(selectedDate, "yyyy-MM-dd")}`),
   });
 
   // Get patients (all users who are not healthcare professionals)
-  const { data: patients = [] } = useQuery({
+  const { data: patients = [] } = useQuery<UserType[]>({
     queryKey: ["/api/patients"],
     queryFn: () => apiRequest("GET", "/api/patients"),
   });
 
   // Get transcriptions for selected date
-  const { data: transcriptions = [] } = useQuery({
+  const { data: transcriptions = [] } = useQuery<Transcription[]>({
     queryKey: ["/api/transcriptions", format(selectedDate, "yyyy-MM-dd")],
     queryFn: () => apiRequest("GET", `/api/transcriptions?date=${format(selectedDate, "yyyy-MM-dd")}`),
   });
@@ -113,7 +113,7 @@ export function CalendarScheduler({ onStartTranscription }: CalendarSchedulerPro
 
     // Find patient by name
     const patient = patients.find((p: UserType) => 
-      `${p.firstName} ${p.lastName}`.toLowerCase().includes(newAppointment.patientName.toLowerCase())
+      `${p.firstName || ''} ${p.lastName || ''}`.toLowerCase().includes(newAppointment.patientName.toLowerCase())
     );
 
     if (!patient) {
@@ -288,7 +288,7 @@ export function CalendarScheduler({ onStartTranscription }: CalendarSchedulerPro
             </div>
           ) : (
             <div className="space-y-3">
-              {appointments.map((appointment: Appointment) => (
+              {appointments.map((appointment) => (
                 <div
                   key={appointment.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50"
@@ -358,7 +358,7 @@ export function CalendarScheduler({ onStartTranscription }: CalendarSchedulerPro
             </div>
           ) : (
             <div className="space-y-4">
-              {transcriptions.map((transcription: Transcription) => (
+              {transcriptions.map((transcription) => (
                 <div key={transcription.id} className="border rounded-lg p-4">
                   {editingTranscription?.id === transcription.id ? (
                     // Edit mode

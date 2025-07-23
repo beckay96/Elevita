@@ -575,6 +575,44 @@ export class DatabaseStorage implements IStorage {
     await db.delete(transcriptions).where(eq(transcriptions.id, id));
   }
 
+  async getTranscriptionsByDate(userId: string, date: string): Promise<Transcription[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return await db.select().from(transcriptions)
+      .where(
+        and(
+          eq(transcriptions.userId, userId),
+          gte(transcriptions.recordedAt, startOfDay),
+          lte(transcriptions.recordedAt, endOfDay)
+        )
+      )
+      .orderBy(desc(transcriptions.recordedAt));
+  }
+
+  async getAppointmentsByDate(userId: string, date: string): Promise<Appointment[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return await db.select().from(appointments)
+      .where(
+        and(
+          gte(appointments.appointmentDate, startOfDay),
+          lte(appointments.appointmentDate, endOfDay)
+        )
+      )
+      .orderBy(appointments.appointmentDate);
+  }
+
+  async getPatients(): Promise<User[]> {
+    return await db.select().from(users)
+      .where(eq(users.isHealthcareProfessional, false));
+  }
+
   // Notification operations
   async getNotifications(userId: string, limit: number = 50): Promise<Notification[]> {
     return await db.select().from(notifications)

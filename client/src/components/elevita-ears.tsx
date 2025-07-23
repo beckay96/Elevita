@@ -44,7 +44,14 @@ interface Transcription {
   updatedAt: Date;
 }
 
-export default function ElevitaEars() {
+interface ElevitaEarsProps {
+  className?: string;
+  appointmentId?: number;
+  patientId?: string;
+  defaultTitle?: string;
+}
+
+export function ElevitaEars({ className, appointmentId, patientId, defaultTitle }: ElevitaEarsProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
