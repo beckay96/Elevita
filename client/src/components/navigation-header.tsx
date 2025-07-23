@@ -2,8 +2,10 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/theme-context";
-import { Bell, ChevronDown, Home, Calendar, Pill, Activity, FileText, Sun, Moon, Monitor, LogOut } from "lucide-react";
+import { Bell, ChevronDown, Home, Calendar, Pill, Activity, FileText, Sun, Moon, Monitor, LogOut, Plus } from "lucide-react";
 import { ViewToggle } from "@/components/view-toggle";
+import AIChatPopup from "@/components/ai-chat-popup";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +20,13 @@ export default function NavigationHeader() {
   const { user } = useAuth();
   const { actualTheme, theme, setTheme } = useTheme();
   const [location] = useLocation();
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+  
+  // Determine current view based on user type and toggle state
+  const userInfo = user as any;
+  const isHealthcareProfessional = userInfo?.isHealthcareProfessional;
+  const isProfessionalView = userInfo?.isProfessionalView;
+  const currentView = isHealthcareProfessional && isProfessionalView ? 'professional' : 'patient';
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: Home },
@@ -45,6 +54,16 @@ export default function NavigationHeader() {
           
           <div className="flex items-center space-x-4">
             <ViewToggle />
+            
+            {/* AI Chat Button */}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-9 w-9 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-200/20 dark:border-purple-700/30"
+              onClick={() => setIsAIChatOpen(true)}
+            >
+              <Plus className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            </Button>
             
             <Button 
               variant="ghost" 
@@ -133,6 +152,13 @@ export default function NavigationHeader() {
           </div>
         </div>
       </div>
+      
+      {/* AI Chat Popup */}
+      <AIChatPopup 
+        isOpen={isAIChatOpen}
+        onOpenChange={setIsAIChatOpen}
+        currentView={currentView}
+      />
     </header>
   );
 }
