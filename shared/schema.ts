@@ -178,16 +178,14 @@ export const healthReports = pgTable("health_reports", {
   fileUrl: varchar("file_url"), // PDF download link
 });
 
-// Transcriptions table for Elevita's Ears
+// Transcriptions table for Elevita's Ears - TGA Compliant Speech-to-Text
 export const transcriptions = pgTable("transcriptions", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: varchar("title").notNull(),
   description: text("description"),
   transcript: text("transcript").notNull(),
-  aiSummary: text("ai_summary").notNull(),
   duration: integer("duration").notNull(), // Duration in seconds
-  speakers: text("speakers").array().notNull(), // Array of speaker names
   audioFileUrl: varchar("audio_file_url"), // URL to stored audio file
   recordedAt: timestamp("recorded_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),

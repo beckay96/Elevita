@@ -21,14 +21,16 @@ A comprehensive healthcare AI platform with enterprise-grade design for patients
 - ✅ **View Toggle**: Healthcare professionals can switch between patient and professional views
 - ✅ **Professional Features**: Enhanced functionality for healthcare providers
 - ✅ **Professional Dashboard**: Dedicated dashboard for healthcare professionals with specialized tools
-- ✅ **Elevita's Ears**: AI-powered recording and transcription system for medical consultations
-- ✅ **Transcription Database**: Full CRUD operations for consultation transcriptions with AI summaries
+- ✅ **TGA Compliant Elevita's Ears**: Simple speech-to-text transcription system without advanced AI features
+- ✅ **Audio Waveform Visualization**: Engaging visual recording interface with animated waveforms
+- ✅ **Transcription Database**: TGA-compliant database schema removing AI summaries and speaker identification
 - ✅ **AI Chat Assistant**: Context-aware AI chat popup accessible from + icon with role-based quick prompts
 - ✅ **Notifications Database**: Complete notifications and notification settings tables with proper relations
 - ✅ **Settings Page**: Comprehensive notification preferences management with real-time updates
 - ✅ **Notification API**: Full CRUD operations for notifications and settings management
 - ✅ **Notification Service**: Utility class for triggering notifications across platform features
 - ✅ **Settings Navigation**: Added settings link to navigation header with proper routing
+- ✅ **Coming Soon Features**: Added toast notifications for all development features across platform
 
 ### Technology Stack
 - **Frontend**: React + TypeScript + Tailwind CSS + shadcn/ui

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { AudioWaveform } from "./audio-waveform";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +18,9 @@ import {
   Pause, 
   FileText, 
   Clock, 
-  Users, 
   Download,
   Trash2,
   Edit,
-  Brain,
   Volume2
 } from "lucide-react";
 import {
@@ -39,9 +38,7 @@ interface Transcription {
   title: string;
   description?: string;
   transcript: string;
-  aiSummary: string;
   duration: number;
-  speakers: string[];
   recordedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -86,7 +83,7 @@ export default function ElevitaEars() {
       queryClient.invalidateQueries({ queryKey: ["/api/transcriptions"] });
       toast({
         title: "Success",
-        description: "Recording transcribed and processed successfully",
+        description: "Recording transcribed successfully",
       });
       setRecordingTitle("");
       setRecordingDescription("");
@@ -235,28 +232,32 @@ export default function ElevitaEars() {
               <Mic className="h-5 w-5 text-primary" />
             </div>
             Elevita's Ears
-            <Badge variant="secondary" className="ml-auto">AI-Powered</Badge>
+            <Badge variant="secondary" className="ml-auto">Speech-to-Text</Badge>
           </CardTitle>
           <CardDescription>
-            Record consultations and meetings for automatic transcription and AI analysis
+            Record consultations and meetings for simple speech-to-text transcription
           </CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-6">
           {/* Recording Controls */}
           <div className="text-center space-y-4">
-            {isRecording && (
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-medium">Recording</span>
+            {/* Audio Waveform Visualization */}
+            <div className="bg-card/50 border rounded-lg p-4 mb-4">
+              <AudioWaveform isRecording={isRecording} />
+              {isRecording && (
+                <div className="flex items-center justify-center gap-4 mt-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium">Recording</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-lg font-mono">{formatTime(recordingTime)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-lg font-mono">{formatTime(recordingTime)}</span>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="flex items-center justify-center gap-4">
               {!isRecording ? (
@@ -337,8 +338,8 @@ export default function ElevitaEars() {
 
             {isProcessing && (
               <div className="flex items-center justify-center gap-2 text-primary">
-                <Brain className="h-4 w-4 animate-pulse" />
-                <span className="text-sm">Processing with AI...</span>
+                <Volume2 className="h-4 w-4 animate-pulse" />
+                <span className="text-sm">Processing transcription...</span>
               </div>
             )}
           </div>
@@ -387,10 +388,6 @@ export default function ElevitaEars() {
                           <Clock className="h-3 w-3" />
                           {formatTime(transcription.duration)}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          {transcription.speakers.length} speakers
-                        </span>
                         <span>
                           {new Date(transcription.recordedAt).toLocaleDateString()}
                         </span>
@@ -411,26 +408,15 @@ export default function ElevitaEars() {
                     </div>
                   </div>
                   
-                  {/* AI Summary Preview */}
-                  {transcription.aiSummary && (
-                    <div className="bg-muted/50 rounded-md p-3 mb-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Brain className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium">AI Summary</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {transcription.aiSummary}
-                      </p>
+                  {/* Transcript Preview */}
+                  <div className="bg-muted/50 rounded-md p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">Transcript Preview</span>
                     </div>
-                  )}
-                  
-                  {/* Speakers */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {transcription.speakers.map((speaker, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {speaker}
-                      </Badge>
-                    ))}
+                    <p className="text-sm text-muted-foreground line-clamp-3">
+                      {transcription.transcript}
+                    </p>
                   </div>
                 </div>
               ))}

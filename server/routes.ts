@@ -522,16 +522,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { title, description, duration } = req.body;
       
-      // TODO: Implement actual audio processing and AI transcription
+      // TODO: Implement actual audio processing and speech-to-text transcription
       // For now, create a placeholder entry that will be updated when audio processing is implemented
       const transcription = await storage.createTranscription({
         userId,
         title: title || 'Untitled Recording',
         description: description || '',
-        transcript: '', // Will be populated by AI transcription service
-        aiSummary: '', // Will be populated by AI analysis service
+        transcript: '', // Will be populated by speech-to-text service
         duration: parseInt(duration) || 0,
-        speakers: [], // Will be populated by speaker identification service
         recordedAt: new Date(),
       });
 
