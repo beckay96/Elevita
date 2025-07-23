@@ -49,22 +49,19 @@ export function CalendarScheduler({ onStartTranscription }: CalendarSchedulerPro
   });
 
   // Get appointments for selected date
-  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery<Appointment[]>({
+  const { data: appointments = [], isLoading: appointmentsLoading } = useQuery({
     queryKey: ["/api/appointments", format(selectedDate, "yyyy-MM-dd")],
-    queryFn: () => apiRequest("GET", `/api/appointments?date=${format(selectedDate, "yyyy-MM-dd")}`),
-  });
+  }) as { data: Appointment[], isLoading: boolean };
 
   // Get patients (all users who are not healthcare professionals)
-  const { data: patients = [] } = useQuery<UserType[]>({
+  const { data: patients = [] } = useQuery({
     queryKey: ["/api/patients"],
-    queryFn: () => apiRequest("GET", "/api/patients"),
-  });
+  }) as { data: UserType[] };
 
   // Get transcriptions for selected date
-  const { data: transcriptions = [] } = useQuery<Transcription[]>({
+  const { data: transcriptions = [] } = useQuery({
     queryKey: ["/api/transcriptions", format(selectedDate, "yyyy-MM-dd")],
-    queryFn: () => apiRequest("GET", `/api/transcriptions?date=${format(selectedDate, "yyyy-MM-dd")}`),
-  });
+  }) as { data: Transcription[] };
 
   // Create appointment mutation
   const createAppointmentMutation = useMutation({

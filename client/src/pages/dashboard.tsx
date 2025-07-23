@@ -11,10 +11,20 @@ import MedicationTracker from "@/components/medication-tracker";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Shield } from "lucide-react";
+import AIChatPopup from "@/components/ai-chat-popup";
+import { useState } from "react";
+
+
 
 export default function Dashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+  const { user } = useAuth();
+  const userInfo = user as any;
+  const isHealthcareProfessional = userInfo?.isHealthcareProfessional;
+  const isProfessionalView = userInfo?.isProfessionalView;
+  const currentView = isHealthcareProfessional && isProfessionalView ? 'professional' : 'patient';
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -90,6 +100,21 @@ export default function Dashboard() {
         >
           <Plus className="h-6 w-6" />
         </Button>
+        {/* AI Chat Button */}
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="absolute bottom-0 z-10 h-9 w-9 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-200/20 dark:border-purple-700/30"
+          onClick={() => setIsAIChatOpen(true)}
+        >
+          <Plus className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+        </Button>
+        {/* AI Chat Popup */}
+        <AIChatPopup 
+          isOpen={isAIChatOpen}
+          onOpenChange={setIsAIChatOpen}
+          currentView={currentView}
+        />
       </div>
 
       {/* Regulatory Footer */}

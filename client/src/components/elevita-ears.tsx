@@ -62,7 +62,7 @@ export function ElevitaEars({ className, appointmentId, patientId, defaultTitle 
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Form state for new recording
-  const [recordingTitle, setRecordingTitle] = useState("");
+  const [recordingTitle, setRecordingTitle] = useState(defaultTitle || "");
   const [recordingDescription, setRecordingDescription] = useState("");
   
   // Media recording
@@ -83,6 +83,8 @@ export function ElevitaEars({ className, appointmentId, patientId, defaultTitle 
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('title', recordingTitle || 'Untitled Recording');
       formData.append('description', recordingDescription || '');
+      if (appointmentId) formData.append('appointmentId', appointmentId.toString());
+      if (patientId) formData.append('patientId', patientId);
       
       return apiRequest("POST", "/api/transcriptions", formData);
     },
@@ -440,3 +442,6 @@ export function ElevitaEars({ className, appointmentId, patientId, defaultTitle 
     </div>
   );
 }
+
+// Default export for backward compatibility
+export default ElevitaEars;

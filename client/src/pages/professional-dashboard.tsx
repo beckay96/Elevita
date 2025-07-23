@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Stethoscope, Mic, FileText, Users, Calendar, Clock, TrendingUp, Activity } from "lucide-react";
+import { Link } from "wouter";
 import ElevitaEars from "@/components/elevita-ears";
 
 export default function ProfessionalDashboard() {
@@ -109,6 +110,12 @@ export default function ProfessionalDashboard() {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/calendar">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Calendar & Scheduling
+                  </Link>
+                </Button>
                 <Button variant="outline" className="w-full justify-start" onClick={showComingSoonToast}>
                   <FileText className="mr-2 h-4 w-4" />
                   View All Transcriptions

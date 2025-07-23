@@ -15,6 +15,7 @@ import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import ProfessionalDashboard from "@/pages/professional-dashboard";
 import SetupWizard from "@/components/setup-wizard";
+import { CalendarPage } from "@/pages/calendar";
 
 function Router() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -35,6 +36,7 @@ function Router() {
         <>
           <Route path="/" component={isProfessionalView ? ProfessionalDashboard : Dashboard} />
           <Route path="/professional" component={ProfessionalDashboard} />
+          <Route path="/calendar" component={CalendarPage} />
           <Route path="/medications" component={Medications} />
           <Route path="/symptoms" component={Symptoms} />
           <Route path="/timeline" component={Timeline} />
@@ -55,6 +57,7 @@ function App() {
         <TooltipProvider>
           <div className="min-h-screen bg-background text-foreground transition-colors">
             <Toaster />
+          
             <Router />
           </div>
         </TooltipProvider>

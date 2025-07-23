@@ -72,12 +72,7 @@ export function ViewToggle() {
           </>
         )}
       </Button>
-      
-      {isProfessionalView && (
-        <Badge variant="secondary" className="text-xs py-1 px-2">
-          Pro
-        </Badge>
-      )}
+
     </div>
   );
 }
