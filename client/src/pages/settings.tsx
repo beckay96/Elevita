@@ -49,6 +49,14 @@ export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const showComingSoonToast = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "This feature is currently under development and will be available soon.",
+      duration: 3000,
+    });
+  };
   
   const [formData, setFormData] = useState<NotificationSettingsForm>({
     medicationReminders: true,
@@ -184,12 +192,12 @@ export default function Settings() {
                   <Bell className="h-4 w-4 mr-3" />
                   Notifications
                 </Button>
-                <Button variant="ghost" className="w-full justify-start" disabled>
+                <Button variant="ghost" className="w-full justify-start" onClick={showComingSoonToast}>
                   <User className="h-4 w-4 mr-3" />
                   Profile
                   <Badge variant="secondary" className="ml-auto text-xs">Soon</Badge>
                 </Button>
-                <Button variant="ghost" className="w-full justify-start" disabled>
+                <Button variant="ghost" className="w-full justify-start" onClick={showComingSoonToast}>
                   <Shield className="h-4 w-4 mr-3" />
                   Privacy
                   <Badge variant="secondary" className="ml-auto text-xs">Soon</Badge>

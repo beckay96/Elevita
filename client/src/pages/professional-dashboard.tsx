@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import NavigationHeader from "@/components/navigation-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,10 +9,19 @@ import ElevitaEars from "@/components/elevita-ears";
 
 export default function ProfessionalDashboard() {
   const { user } = useAuth();
+  const { toast } = useToast();
   
   const userRole = (user as any)?.userRole;
   const specialty = (user as any)?.specialty;
   const institution = (user as any)?.institution;
+
+  const showComingSoonToast = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "This feature is currently under development and will be available soon.",
+      duration: 3000,
+    });
+  };
 
   const getRoleTitle = () => {
     switch (userRole) {
@@ -99,15 +109,15 @@ export default function ProfessionalDashboard() {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={showComingSoonToast}>
                   <FileText className="mr-2 h-4 w-4" />
                   View All Transcriptions
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={showComingSoonToast}>
                   <Users className="mr-2 h-4 w-4" />
                   Patient Records
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={showComingSoonToast}>
                   <Activity className="mr-2 h-4 w-4" />
                   Analytics Dashboard
                 </Button>
@@ -151,7 +161,7 @@ export default function ProfessionalDashboard() {
 
         {/* Secondary Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={showComingSoonToast}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-blue-600" />
@@ -162,13 +172,13 @@ export default function ProfessionalDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="ghost" className="w-full">
+              <Button variant="ghost" className="w-full" onClick={showComingSoonToast}>
                 Access Patient Portal
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={showComingSoonToast}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
@@ -179,13 +189,13 @@ export default function ProfessionalDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="ghost" className="w-full">
+              <Button variant="ghost" className="w-full" onClick={showComingSoonToast}>
                 View Analytics
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={showComingSoonToast}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-purple-600" />
@@ -196,7 +206,7 @@ export default function ProfessionalDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="ghost" className="w-full">
+              <Button variant="ghost" className="w-full" onClick={showComingSoonToast}>
                 Manage Schedule
               </Button>
             </CardContent>

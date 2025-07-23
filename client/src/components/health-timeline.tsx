@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { Activity, PillBottle, Calendar, TrendingUp } from "lucide-react";
 
 interface TimelineEvent {
@@ -19,10 +20,19 @@ interface HealthTimelineProps {
 }
 
 export default function HealthTimeline({ showFullTimeline = false }: HealthTimelineProps) {
+  const { toast } = useToast();
   const { data: timelineEvents, isLoading } = useQuery({
     queryKey: ["/api/dashboard/timeline"],
     retry: false,
   });
+
+  const showComingSoonToast = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "This feature is currently under development and will be available soon.",
+      duration: 3000,
+    });
+  };
 
   const getEventIcon = (type: string) => {
     switch (type) {
@@ -92,8 +102,8 @@ export default function HealthTimeline({ showFullTimeline = false }: HealthTimel
           {!showFullTimeline && (
             <div className="flex space-x-2">
               <Button size="sm" className="bg-elevita-teal text-white">7 Days</Button>
-              <Button size="sm" variant="ghost" className="bg-elevita-medium-gray/30 text-gray-300 hover:bg-elevita-medium-gray/50">30 Days</Button>
-              <Button size="sm" variant="ghost" className="bg-elevita-medium-gray/30 text-gray-300 hover:bg-elevita-medium-gray/50">3 Months</Button>
+              <Button size="sm" variant="ghost" className="bg-elevita-medium-gray/30 text-gray-300 hover:bg-elevita-medium-gray/50" onClick={showComingSoonToast}>30 Days</Button>
+              <Button size="sm" variant="ghost" className="bg-elevita-medium-gray/30 text-gray-300 hover:bg-elevita-medium-gray/50" onClick={showComingSoonToast}>3 Months</Button>
             </div>
           )}
         </div>

@@ -15,6 +15,14 @@ import { FileText, Download, Share, Calendar, Clock } from "lucide-react";
 export default function Reports() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+
+  const showComingSoonToast = () => {
+    toast({
+      title: "Coming Soon!",
+      description: "This feature is currently under development and will be available soon.",
+      duration: 3000,
+    });
+  };
   const [reportType, setReportType] = useState("summary");
   const [periodStart, setPeriodStart] = useState(() => {
     const date = new Date();
@@ -216,17 +224,17 @@ Always consult with qualified healthcare professionals for medical decisions.
                 <CardTitle className="text-white">Quick Export Options</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-teal/20 text-white justify-start">
+                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-teal/20 text-white justify-start" onClick={showComingSoonToast}>
                   <Download className="h-4 w-4 mr-2 text-elevita-bright-teal" />
                   Export Last 30 Days
                 </Button>
                 
-                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-purple/20 text-white justify-start">
+                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-purple/20 text-white justify-start" onClick={showComingSoonToast}>
                   <Share className="h-4 w-4 mr-2 text-elevita-light-purple" />
                   Share with Provider
                 </Button>
                 
-                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-teal/20 text-white justify-start">
+                <Button className="w-full bg-elevita-medium-gray/30 hover:bg-elevita-teal/20 text-white justify-start" onClick={showComingSoonToast}>
                   <Calendar className="h-4 w-4 mr-2 text-elevita-bright-teal" />
                   Monthly Summary
                 </Button>
