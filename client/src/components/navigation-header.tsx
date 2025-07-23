@@ -50,7 +50,6 @@ export default function NavigationHeader() {
                 alt="Elevita Logo" 
                 className="h-10 w-auto"
               />
-              <h1 className="text-xl font-bold text-foreground">Elevita</h1>
             </div>
           </Link>
           

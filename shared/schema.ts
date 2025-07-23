@@ -181,7 +181,9 @@ export const healthReports = pgTable("health_reports", {
 // Transcriptions table for Elevita's Ears - TGA Compliant Speech-to-Text
 export const transcriptions = pgTable("transcriptions", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Doctor/clinician who made the recording
+  patientId: varchar("patient_id").references(() => users.id, { onDelete: "cascade" }), // Patient the recording is about
+  appointmentId: integer("appointment_id").references(() => appointments.id, { onDelete: "set null" }), // Related appointment
   title: varchar("title").notNull(),
   description: text("description"),
   transcript: text("transcript").notNull(),
@@ -338,6 +340,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   aiInsights: many(aiInsights),
   reminders: many(reminders),
   healthReports: many(healthReports),
+  transcriptions: many(transcriptions),
+  patientTranscriptions: many(transcriptions, { relationName: "PatientTranscriptions" }),
 }));
 
 export const healthProfilesRelations = relations(healthProfiles, ({ one }) => ({
@@ -373,10 +377,27 @@ export const symptomsRelations = relations(symptoms, ({ one }) => ({
   }),
 }));
 
-export const appointmentsRelations = relations(appointments, ({ one }) => ({
+export const appointmentsRelations = relations(appointments, ({ one, many }) => ({
   user: one(users, {
     fields: [appointments.userId],
     references: [users.id],
+  }),
+  transcriptions: many(transcriptions),
+}));
+
+export const transcriptionsRelations = relations(transcriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [transcriptions.userId],
+    references: [users.id],
+  }),
+  patient: one(users, {
+    fields: [transcriptions.patientId],
+    references: [users.id],
+    relationName: "PatientTranscriptions",
+  }),
+  appointment: one(appointments, {
+    fields: [transcriptions.appointmentId],
+    references: [appointments.id],
   }),
 }));
 
