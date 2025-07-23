@@ -4,21 +4,21 @@ import { Heart, Shield, Users, TrendingUp, Brain, FileText } from "lucide-react"
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-elevita-black">
+    <div className="min-h-screen bg-gradient-light">
       {/* Navigation */}
-      <nav className="bg-elevita-dark-gray/80 backdrop-blur-md border-b border-elevita-medium-gray/20">
+      <nav className="bg-gradient-light backdrop-blur-md border-b border-elevita-medium-gray/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-lg bg-gradient-teal flex items-center justify-center">
-                <Heart className="text-white h-6 w-6" />
+                <Heart className="text-primary h-6 w-6" />
               </div>
               <h1 className="text-xl font-bold text-white">Elevita</h1>
             </div>
             
             <Button 
               onClick={() => window.location.href = '/api/login'}
-              className="bg-gradient-teal hover:opacity-90 text-white px-6"
+              className="bg-gradient-teal hover:opacity-90 text-white hover:font-bold hover:text-primary px-6"
             >
               Sign In
             </Button>
@@ -67,7 +67,7 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="bg-elevita-medium-gray/30 border-elevita-teal backdrop-blur-md">:
+            <Card className="bg-gradient-teal border-elevita-bright-teal backdrop-blur-md">:
               <CardContent className="p-6">
                 <div className="w-12 h-12 rounded-lg bg-elevita-teal/20 flex items-center justify-center mb-4">
                   <TrendingUp className="h-6 w-6 text-elevita-bright-teal" />

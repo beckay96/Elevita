@@ -101,7 +101,7 @@ export default function Dashboard() {
               <strong>Important Medical Disclaimer</strong>
             </p>
             <p className="text-muted-foreground text-xs max-w-4xl mx-auto">
-              Elevita is designed to help you organize and communicate your health information. This platform does not provide medical advice, diagnosis, or treatment recommendations. The AI insights are for informational purposes only and should never replace professional medical consultation. Always consult with qualified healthcare professionals for medical decisions. In case of medical emergency, contact your local emergency services immediately.
+              Elevita is designed to help you organise and communicate your health information. This platform does not provide medical advice, diagnosis, or treatment recommendations. The AI insights are for informational purposes only and should never replace professional medical consultation. Always consult with qualified healthcare professionals for medical decisions. In case of medical emergency, contact your local emergency services immediately.
             </p>
             <div className="mt-4 flex justify-center space-x-6 text-xs text-muted-foreground/70">
               <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

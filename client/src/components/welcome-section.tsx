@@ -14,33 +14,33 @@ export default function WelcomeSection() {
 
   return (
     <div className="mb-8">
-      <div className="bg-gradient-teal rounded-2xl p-8 relative overflow-hidden">
+      <div className="bg-gradient-light dark:bg-gradient-teal rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-glass-dark"></div>
         <div className="relative z-10">
-          <h2 className="text-3xl font-bold text-white mb-2">
-            Welcome back, <span className="text-elevita-bright-teal">{firstName}</span>
+          <h2 className="text-3xl font-bold text-black dark:text-white mb-2">
+            Welcome back, <span className="bg-gradient-to-r from-teal-700 to-purple-700 bg-clip-text text-transparent dark:bg-gradient-to-r dark:from-teal-300 dark:to-purple-400 dark:bg-clip-text dark:text-transparent">{firstName}</span>
           </h2>
-          <p className="text-gray-200 text-lg mb-4">
+          <p className="text-black dark:text-gray-200 text-lg mb-4">
             Your health journey continues. Here's what's happening today.
           </p>
           <div className="flex flex-wrap gap-4 mt-6">
             <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
-              <div className="text-elevita-bright-teal text-2xl font-bold">
+              <div className="text-teal-300 text-2xl font-bold">
                 {stats?.daysTracking || 0}
               </div>
-              <div className="text-gray-300 text-sm">Days tracking</div>
+              <div className="text-gray-100 text-sm">Days tracking</div>
             </div>
             <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
               <div className="text-elevita-light-purple text-2xl font-bold">
                 {stats?.medicationsActive || 0}
               </div>
-              <div className="text-gray-300 text-sm">Active medications</div>
+              <div className="text-gray-100 text-sm">Active medications</div>
             </div>
             <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 min-w-[160px]">
-              <div className="text-elevita-bright-teal text-2xl font-bold">
+              <div className="text-elevita-teal text-2xl font-bold">
                 {stats?.upcomingAppointments || 0}
               </div>
-              <div className="text-gray-300 text-sm">Upcoming appointments</div>
+              <div className="text-gray-100 text-sm">Upcoming appointments</div>
             </div>
           </div>
         </div>
