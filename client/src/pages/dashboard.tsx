@@ -92,30 +92,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <div className="fixed bottom-8 right-8 z-50">
-        <Button 
-          size="lg"
-          className="w-14 h-14 bg-primary rounded-full shadow-2xl text-primary-foreground hover:scale-105 transition-transform duration-200 p-0"
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
-        {/* AI Chat Button */}
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="absolute bottom-0 z-10 h-9 w-9 rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-200/20 dark:border-purple-700/30"
-          onClick={() => setIsAIChatOpen(true)}
-        >
-          <Plus className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-        </Button>
-        {/* AI Chat Popup */}
-        <AIChatPopup 
-          isOpen={isAIChatOpen}
-          onOpenChange={setIsAIChatOpen}
-          currentView={currentView}
-        />
-      </div>
+      
 
       {/* Regulatory Footer */}
       <footer className="bg-card border-t border-border py-6 mt-12">
