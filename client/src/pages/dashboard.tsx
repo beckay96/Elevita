@@ -92,7 +92,12 @@ export default function Dashboard() {
         </div>
       </div>
 
-      
+      {/* AI Chat Popup */}
+      <AIChatPopup 
+        isOpen={isAIChatOpen}
+        onOpenChange={setIsAIChatOpen}
+        currentView={currentView}
+      />
 
       {/* Regulatory Footer */}
       <footer className="bg-card border-t border-border py-6 mt-12">

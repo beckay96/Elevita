@@ -83,6 +83,7 @@ export function ElevitaEars({ className, appointmentId, patientId, defaultTitle 
       formData.append('audio', audioBlob, 'recording.webm');
       formData.append('title', recordingTitle || 'Untitled Recording');
       formData.append('description', recordingDescription || '');
+      formData.append('duration', recordingTime.toString());
       if (appointmentId) formData.append('appointmentId', appointmentId.toString());
       if (patientId) formData.append('patientId', patientId);
       

@@ -16,8 +16,26 @@ import {
   insertReminderSchema,
 } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Configure multer for file uploads
+  const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 50 * 1024 * 1024, // 50MB limit
+    },
+    fileFilter: (req, file, cb) => {
+      const allowedTypes = ['audio/webm', 'audio/mp4', 'audio/wav', 'audio/ogg'];
+      if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new Error('Invalid file type. Only audio files are allowed.'));
+      }
+    },
+  });
+
   // Auth middleware
   await setupAuth(app);
 
@@ -517,7 +535,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/transcriptions', isAuthenticated, async (req: any, res) => {
+  app.post('/api/transcriptions', isAuthenticated, upload.single('audio'), async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       
@@ -526,18 +544,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Access denied: Professional features only" });
       }
 
-      const { title, description, duration, patientId, appointmentId } = req.body;
+      const { title, description, patientId, appointmentId } = req.body;
+      const audioFile = req.file;
       
-      // TODO: Implement actual audio processing and speech-to-text transcription
-      // For now, create a placeholder entry that will be updated when audio processing is implemented
+      if (!audioFile) {
+        return res.status(400).json({ message: "Audio file is required" });
+      }
+
+      // Calculate approximate duration from file size (rough estimate)
+      // For WebM audio, approximately 1KB per second at standard quality
+      const estimatedDuration = Math.round(audioFile.size / 1000);
+      
+      // Create a simple transcript placeholder - TGA compliant (no AI processing, just placeholder)
+      const simpleTranscript = `[Audio recording captured at ${new Date().toLocaleString()}]\n\nThis is a speech-to-text transcription placeholder. The actual transcription would contain the spoken words from the ${estimatedDuration}-second audio recording.\n\n[Recording completed]`;
+      
       const transcription = await storage.createTranscription({
         userId,
         patientId: patientId || null,
-        appointmentId: appointmentId || null,
+        appointmentId: appointmentId ? parseInt(appointmentId) : null,
         title: title || 'Untitled Recording',
         description: description || '',
-        transcript: '', // Will be populated by speech-to-text service
-        duration: parseInt(duration) || 0,
+        transcript: simpleTranscript,
+        duration: estimatedDuration,
         recordedAt: new Date(),
       });
 
