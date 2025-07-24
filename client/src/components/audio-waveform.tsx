@@ -2,10 +2,11 @@ import { useEffect, useRef } from "react"
 
 interface AudioWaveformProps {
   isRecording: boolean
+  isPaused?: boolean
   className?: string
 }
 
-export function AudioWaveform({ isRecording, className = "" }: AudioWaveformProps) {
+export function AudioWaveform({ isRecording, isPaused = false, className = "" }: AudioWaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>()
 
@@ -20,9 +21,10 @@ export function AudioWaveform({ isRecording, className = "" }: AudioWaveformProp
       const { width, height } = canvas
       ctx.clearRect(0, 0, width, height)
 
-      if (!isRecording) {
-        // Draw static waveform
-        ctx.strokeStyle = "hsl(175 60% 60%)"
+      if (!isRecording || isPaused) {
+        // Draw static waveform when not recording or paused
+        const opacity = isPaused ? 0.5 : 1 // Dimmed when paused
+        ctx.strokeStyle = isPaused ? "hsl(175 60% 60% / 0.5)" : "hsl(175 60% 60%)"
         ctx.lineWidth = 2
         ctx.beginPath()
         for (let i = 0; i < width; i += 4) {
@@ -30,6 +32,13 @@ export function AudioWaveform({ isRecording, className = "" }: AudioWaveformProp
           ctx.lineTo(i, height / 2 + amplitude)
         }
         ctx.stroke()
+        
+        // Add paused indicator if paused
+        if (isPaused) {
+          ctx.fillStyle = "hsl(175 60% 60% / 0.3)"
+          ctx.fillRect(width / 2 - 20, height / 2 - 15, 10, 30)
+          ctx.fillRect(width / 2 + 10, height / 2 - 15, 10, 30)
+        }
         return
       }
 
@@ -66,7 +75,7 @@ export function AudioWaveform({ isRecording, className = "" }: AudioWaveformProp
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isRecording])
+  }, [isRecording, isPaused])
 
   return (
     <canvas

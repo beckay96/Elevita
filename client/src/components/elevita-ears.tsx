@@ -253,7 +253,7 @@ export function ElevitaEars({ className, appointmentId, patientId, defaultTitle 
           <div className="text-center space-y-4">
             {/* Audio Waveform Visualization */}
             <div className="bg-card/50 border rounded-lg p-4 mb-4">
-              <AudioWaveform isRecording={isRecording} />
+              <AudioWaveform isRecording={isRecording} isPaused={isPaused} />
               {isRecording && (
                 <div className="flex items-center justify-center gap-4 mt-3">
                   <div className="flex items-center gap-2">
