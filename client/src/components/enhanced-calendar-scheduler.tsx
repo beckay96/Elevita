@@ -126,53 +126,32 @@ export function EnhancedCalendarScheduler({ onStartTranscription }: EnhancedCale
   return (
     <div className="space-y-6">
       {/* Enhanced Header with Search and Filters */}
-      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+      {/* Date Header */}
+      <Card className="bg-gradient-light dark:bg-gradient-teal">
         <CardHeader>
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-              <CardTitle className="text-2xl">Calendar & Scheduling</CardTitle>
-              <p className="text-muted-foreground mt-1">
-                Manage appointments and start transcription sessions
-              </p>
-            </div>
-            
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search appointments..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-64"
-                />
-              </div>
-              
-              {/* Type Filter */}
-              {appointmentTypes.length > 0 && (
-                <select 
-                  className="px-3 py-2 border rounded-md bg-background"
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                >
-                  <option value="">All Types</option>
-                  {appointmentTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
+              <CardTitle className="text-xl">
+                {format(selectedDate, "EEEE, MMMM d, yyyy")}
+              </CardTitle>
+              {isSameDay(selectedDate, new Date()) && (
+                <Badge variant="secondary">Today</Badge>
               )}
-              
-              {/* Add Appointment Button */}
-              <Button onClick={() => setShowSmartForm(true)} className="whitespace-nowrap">
-                <Plus className="h-4 w-4 mr-2" />
-                New Appointment
+            </div>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" onClick={() => navigateDate('prev')}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedDate(new Date())}>
+                Today
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => navigateDate('next')}>
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </CardHeader>
       </Card>
-
-      {/* Smart Date Navigation */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Week View Navigation */}
         <Card className="lg:col-span-1">
@@ -204,7 +183,7 @@ export function EnhancedCalendarScheduler({ onStartTranscription }: EnhancedCale
                 const dayAppointments = appointments.filter(apt => 
                   isSameDay(new Date(apt.appointmentDate), date)
                 );
-                
+
                 return (
                   <Button
                     key={date.toISOString()}
@@ -228,32 +207,54 @@ export function EnhancedCalendarScheduler({ onStartTranscription }: EnhancedCale
 
         {/* Selected Date Details */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Date Header */}
-          <Card>
+          
+          {/* Smart Date Navigation */}
+          <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CardTitle className="text-xl">
-                    {format(selectedDate, "EEEE, MMMM d, yyyy")}
-                  </CardTitle>
-                  {isSameDay(selectedDate, new Date()) && (
-                    <Badge variant="secondary">Today</Badge>
-                  )}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="text-2xl">Calendar & Scheduling</CardTitle>
+                  <p className="text-muted-foreground mt-1">
+                    Manage appointments and start transcription sessions
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="sm" onClick={() => navigateDate('prev')}>
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedDate(new Date())}>
-                    Today
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => navigateDate('next')}>
-                    <ChevronRight className="h-4 w-4" />
+                <div className="flex items-center gap-3">
+                  {/* Search */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search appointments..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10 w-64"
+                    />
+                  </div>
+                  
+                  {/* Type Filter */}
+                  {appointmentTypes.length > 0 && (
+                    <select 
+                      className="px-3 py-2 border rounded-md bg-background"
+                      value={filterType}
+                      onChange={(e) => setFilterType(e.target.value)}
+                    >
+                      <option value="">All Types</option>
+                      {appointmentTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
+                    </select>
+                  )}
+                  
+                  {/* Add Appointment Button */}
+                  <Button onClick={() => setShowSmartForm(true)} className="whitespace-nowrap">
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Appointment
                   </Button>
                 </div>
               </div>
             </CardHeader>
           </Card>
+
+
 
           {/* Appointments for Selected Date */}
           <Card>
